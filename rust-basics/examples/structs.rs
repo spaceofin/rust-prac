@@ -1,21 +1,26 @@
 #![allow(dead_code)]
 
+// A (c-like) struct with two fields
 #[derive(Debug)]
 struct Person {
     name: String,
     age: u8,
 }
 
+// A unit struct
 struct Unit;
 
+// A tuple struct
 struct Pair(i32, f32);
 
+// A (c-like) struct with two fields
 #[derive(Debug, Clone)]
 struct Point {
     x: f32,
     y: f32,
 }
 
+// A (c-like) struct with two fields
 #[derive(Debug)]
 struct Rectangle {
     top_left: Point,

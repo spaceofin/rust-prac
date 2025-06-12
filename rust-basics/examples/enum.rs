@@ -1,3 +1,5 @@
+use std::io::{self, Write};
+
 enum WebEvent {
      // An `enum` variant may either be `unit-like`,
     PageLoad,
@@ -26,8 +28,8 @@ fn inspect(event: WebEvent) {
     }
 }
 
-fn main() {
-    let pressed = WebEvent::KeyPress('x');
+fn _print_webevents() {
+        let pressed = WebEvent::KeyPress('x');
     // `to_owned()` creates an owned `String` from a string slice.
     let pasted  = WebEvent::Paste("my text".to_owned());
     // let pasted = WebEvent::Paste("my text");
@@ -40,4 +42,86 @@ fn main() {
     inspect(click);
     inspect(load);
     inspect(unload);
+}
+
+
+fn get_char_input() -> char {
+    loop {
+    print!("Please enter a single character: ");
+    // Flush the output buffer
+    io::stdout().flush().unwrap();
+
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+
+    // Trim whitespace including newline
+    let trimmed = input.trim();
+    if let Some(c) = trimmed.chars().next() {
+            return c;
+        } else {
+            println!("No input detected, please try again.");
+        }
+    }
+}
+
+fn get_string_input() -> String {
+    loop {
+        print!("Please enter a string: ");
+        io::stdout().flush().unwrap();
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
+
+        // Trim whitespace and return String
+        let trimmed = input.trim(); 
+        if !trimmed.is_empty() {    
+            return trimmed.to_string();
+        } else {
+            println!("Input cannot be empty. Please try again.");
+        }
+    }
+}
+
+fn main() {
+    // print_webevents();
+    println!("Select an event by number:");
+    println!("1: PageLoad");
+    println!("2: PageUnload");
+    println!("3: KeyPress");
+    println!("4: Paste");
+    println!("5: Click");
+    println!("6: Exit");
+
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
+
+    let choice = input.trim().parse::<u32>().unwrap_or(0);
+
+    let event = match choice {
+        1 => WebEvent::PageLoad,
+        2 => WebEvent::PageUnload,
+        3 => {
+            let c = get_char_input();
+            WebEvent::KeyPress(c)
+        },
+        4 => {
+           let s = get_string_input();
+            WebEvent::Paste(s)
+        },
+        5 => {
+            WebEvent::Click { x: 10, y: 15 }
+        },
+        6 => {
+            println!("Exiting...");
+            return;
+        }
+        _ => {
+            println!("Invalid choice.");
+            return;
+        }
+    };
+
+    inspect(event);
 }

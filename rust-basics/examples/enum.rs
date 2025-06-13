@@ -1,3 +1,6 @@
+// An attribute to hide warnings for unused code.
+#![allow(dead_code)]
+
 use std::io::{self, Write};
 
 enum WebEvent {
@@ -82,8 +85,7 @@ fn get_string_input() -> String {
     }
 }
 
-fn main() {
-    // print_webevents();
+fn handle_webevents() {
     println!("Select an event by number:");
     println!("1: PageLoad");
     println!("2: PageUnload");
@@ -124,4 +126,55 @@ fn main() {
     };
 
     inspect(event);
+}
+
+
+enum Stage {
+    Beginner,
+    Advanced,
+}
+
+enum Role {
+    Student,
+    Teacher,
+}
+
+mod enums;
+
+fn print_stage_level_and_role() {
+    //use crate::Stage::{Beginner, Advanced};
+    use Stage::{Beginner, Advanced};
+    //use crate::Role::*;
+    use Role::*;
+    use enums::example_enums::Level::*;
+
+    let stage = Beginner;
+    // Equivalent to `Role::Student`.
+    let role = Student;
+    let level = Medium;
+
+    match stage {
+        // Note the lack of scoping because of the explicit `use` above.
+        Beginner => println!("Beginners are starting their learning journey!"),
+        Advanced => println!("Advanced learners are mastering their subjects..."),
+    }
+
+    match role {
+        // Note again the lack of scoping.
+        Student => println!("Students are acquiring knowledge!"),
+        Teacher => println!("Teachers are spreading knowledge!"),
+    }
+
+    match level {
+        Easy => println!("Easy level: Let's get started!"),
+        Medium => println!("Medium level: Challenge yourself!"),    
+        Hard => println!("Hard level: Brace yourself!"),    
+    }
+}
+
+
+fn main(){
+    //print_webevents();
+    //handle_webevents()
+    print_stage_level_and_role();
 }

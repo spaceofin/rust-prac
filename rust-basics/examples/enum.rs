@@ -172,9 +172,26 @@ fn print_stage_level_and_role() {
     }
 }
 
+type Operations = enums::example_enums::VeryVerboseEnumOfThingsToDoWithNumbers;
+
+fn run_operations() {
+
+    let op_add = Operations::Add;
+    let op_sub = Operations::Subtract;
+
+    let num1 = 5;
+    let num2 = 2;
+
+    let add_result = op_add.run(num1,num2);
+    let sub_result = op_sub.run(num1,num2);
+
+    println!("Add result of {} and {} is {}", num1, num2, add_result);
+    println!("Subtract result of {} and {} is {}", num1, num2, sub_result);
+}
 
 fn main(){
     //print_webevents();
     //handle_webevents()
-    print_stage_level_and_role();
+    // print_stage_level_and_role();
+    run_operations();
 }

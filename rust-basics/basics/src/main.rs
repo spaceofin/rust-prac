@@ -1,5 +1,3 @@
-mod utils;
-
 struct Circle {
     radius: f64,
 }

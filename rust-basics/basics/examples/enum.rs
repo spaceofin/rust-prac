@@ -189,9 +189,29 @@ fn run_operations() {
     println!("Subtract result of {} and {} is {}", num1, num2, sub_result);
 }
 
+fn print_colors_and_numbers() {
+    use crate::enums::example_enums::{Number, Color};
+
+    // `enums` can be cast as integers.
+    println!("zero is {:?}", Number::Zero);
+    println!("one is {:?}", Number::One);
+    println!("two is {:?}", Number::Two);
+    println!("zero is {}", Number::Zero as i32);
+    println!("one is {}", Number::One as i32);
+    println!("one is {}", Number::Two as i32);
+
+    println!("roses are {:?}", Color::Red);
+    println!("grass is {:?}", Color::Green);
+    println!("violets are {:?}", Color::Blue);
+    println!("roses are #{:06x}", Color::Red as i32);
+    println!("grass is #{:06x}", Color::Green as i32);
+    println!("violets are #{:06x}", Color::Blue as i32);
+}
+
 fn main(){
     //print_webevents();
     //handle_webevents()
     // print_stage_level_and_role();
-    run_operations();
+    // run_operations();
+    print_colors_and_numbers();
 }

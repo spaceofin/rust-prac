@@ -208,10 +208,45 @@ fn print_colors_and_numbers() {
     println!("violets are #{:06x}", Color::Blue as i32);
 }
 
+fn print_linked_list_upto(n: u32) {
+    use crate::enums::linked_list::{List};
+    // Create an empty linked list
+    let mut list = List::new();
+
+    // Prepend elements
+    for i in 1 ..=n {
+        list = list.prepend(i);
+    }
+
+    // Show the final state of the list
+    println!("linked list has length: {}", list.len());
+    println!("{}", list.stringify());
+}
+
+fn read_linked_list_length() {
+    print!("Please enter a number (1 or greater): ");
+    io::stdout().flush().unwrap();
+
+    let mut input = String::new();
+
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read input");
+
+    let n: u32 = input.trim().parse().expect("Please enter a valid number");
+
+     if n < 1 {
+        panic!("Number must be at least 1");
+    }
+
+    print_linked_list_upto(n);
+}
+
 fn main(){
     //print_webevents();
     //handle_webevents()
     // print_stage_level_and_role();
     // run_operations();
-    print_colors_and_numbers();
+    // print_colors_and_numbers();
+   read_linked_list_length();
 }

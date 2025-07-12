@@ -31,7 +31,7 @@ fn inspect(event: WebEvent) {
     }
 }
 
-fn _print_webevents() {
+fn print_webevents() {
         let pressed = WebEvent::KeyPress('x');
     // `to_owned()` creates an owned `String` from a string slice.
     let pasted  = WebEvent::Paste("my text".to_owned());
@@ -139,14 +139,13 @@ enum Role {
     Teacher,
 }
 
-mod enums;
 
 fn print_stage_level_and_role() {
     //use crate::Stage::{Beginner, Advanced};
     use Stage::{Beginner, Advanced};
     //use crate::Role::*;
     use Role::*;
-    use enums::example_enums::Level::*;
+    use crate::enums::example_enums::Level::*;
 
     let stage = Beginner;
     // Equivalent to `Role::Student`.
@@ -172,7 +171,7 @@ fn print_stage_level_and_role() {
     }
 }
 
-type Operations = enums::example_enums::VeryVerboseEnumOfThingsToDoWithNumbers;
+type Operations = crate::enums::example_enums::VeryVerboseEnumOfThingsToDoWithNumbers;
 
 fn run_operations() {
 
@@ -242,11 +241,11 @@ fn read_linked_list_length() {
     print_linked_list_upto(n);
 }
 
-fn main(){
-    //print_webevents();
-    //handle_webevents()
+pub fn run(){
+    // print_webevents();
+    // handle_webevents();
     // print_stage_level_and_role();
     // run_operations();
     // print_colors_and_numbers();
-   read_linked_list_length();
+    read_linked_list_length();
 }

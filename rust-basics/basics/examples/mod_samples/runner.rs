@@ -44,7 +44,7 @@ fn print_file_mods() {
 
     use sample_mod1::sub3::print_msg1;
     use sample_mod1::sub3::{print_msg2, print_msg3};
-    use crate::sample_mod1::sub3::print_msg4;
+    use crate::mod_samples::runner::sample_mod1::sub3::print_msg4;
 
     // compile error: private module
     // sample_mod1::sub1::print_msg();
@@ -62,26 +62,25 @@ fn print_file_mods() {
     print_msg4();
 }
 
-mod mod_samples;
-
 fn print_mod_samples() {
     // compile error: cannot declare a non-inline module inside a block
     // mod_basic;
 
-    #[path = "mod_samples/mod_basic.rs"]
+    #[path = "mod_basic.rs"]
     mod mod_basic;
 
-    mod_basic::print_msg();
-    mod_samples::mod_basic::print_msg();
+    use super::{mod_nested};
 
-    use mod_samples::mod_nested::nested_mod2::print_msg as print_nested_msg;
+    mod_basic::print_msg();
+
+    use mod_nested::nested_mod2::print_msg as print_nested_msg;
 
     print_nested_msg();
-    mod_samples::mod_nested::nested_mod2::print_msg()
+    mod_nested::nested_mod2::print_msg()
 }
 
 
-fn main() {
+pub fn run() {
     println!("----------Modules in current file----------");
     print_file_mods();
 

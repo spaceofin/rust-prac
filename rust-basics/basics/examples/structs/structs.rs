@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 // A (c-like) struct with two fields
 #[derive(Debug)]
 struct Person {
@@ -39,7 +37,7 @@ fn square(point:Point, side: f32) -> Rectangle {
 
 }
 
-fn main() {
+pub fn print_struct_examples() {
     let name = String::from("Peter");
     let age = 27;
     let peter = Person { name, age };

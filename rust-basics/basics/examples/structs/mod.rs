@@ -3,4 +3,5 @@
 
 pub mod structs;
 pub mod users;
+pub mod persons;
 pub mod runner;

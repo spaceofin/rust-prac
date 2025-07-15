@@ -3,11 +3,13 @@ mod std_library_types;
 mod mod_samples;
 mod ownership;
 mod structs;
+mod traits;
 
 fn main() {
     // enums::runner::run();
     // std_library_types::runner::run();
     // mod_samples::runner::run();
     // ownership::runner::run();
-    structs::runner::run();
+    // structs::runner::run();
+    traits::runner::run();
 }

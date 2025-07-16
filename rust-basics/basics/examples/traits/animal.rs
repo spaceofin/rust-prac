@@ -3,7 +3,9 @@ trait Animal {
 
     fn name(&self) -> &'static str;
     fn noise(&self) -> &'static str;
-    fn status(&self);
+    fn status(&self) {
+        println!("{} is resting", self.name());
+    }
 
     fn talk(&self) {
         println! ("{} says {}", self.name(), self.noise());
@@ -13,6 +15,10 @@ trait Animal {
 struct Cat { name: &'static str, asleep: bool }
 
 impl Cat {
+    fn new() -> Self {
+        Cat { name: "Unknown", asleep: false }
+    }
+
     fn is_asleep(&self) -> bool {
         self.asleep
     }
@@ -66,7 +72,51 @@ impl Animal for Cat {
     }
 }
 
-pub fn animal_demo() {
+struct Sheep { name: &'static str }
+struct Cow { name: &'static str }
+
+impl Sheep {
+    fn new() -> Self {
+        Sheep { name: "Unknown" }
+    }
+}
+
+impl Animal for Sheep {
+    fn new(name: &'static str) -> Self {
+        Sheep { name }
+    }
+
+    fn name(&self) -> &'static str {
+        self.name
+    }
+
+    fn noise(&self) -> &'static str {
+        "baaaaah!"
+    }
+}
+
+impl Cow {
+    fn new() -> Self {
+        Cow { name: "Unknown" }
+    }
+}
+
+
+impl Animal for Cow {
+    fn new(name: &'static str) -> Self {
+        Cow { name }
+    }
+
+    fn name(&self) -> &'static str {
+        self.name
+    }
+
+    fn noise(&self) -> &'static str {
+        "moooooo!"
+    }
+}
+
+pub fn cat_demo() {
     let mut muffin: Cat = Animal::new("Muffin");
 
     muffin.status();
@@ -79,4 +129,24 @@ pub fn animal_demo() {
     muffin.wake_up();
     muffin.status();
     muffin.talk();
+}
+
+pub fn animal_demo() {
+
+    let simba: Cat = Animal::new("simba");
+    let dolly: Sheep = Animal::new("dolly");
+    let moomoo: Cow = Animal::new("moomoo");
+
+    simba.talk();
+    dolly.talk();
+    moomoo.talk();
+
+    let anonymous_cat = Cat::new();
+    let anonymous_sheep = Sheep::new();
+    let anonymous_cow = Cow::new();
+    
+    anonymous_cat.talk();
+    anonymous_sheep.talk();
+    anonymous_cow.talk();
+
 }

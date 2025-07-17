@@ -4,6 +4,7 @@ mod mod_samples;
 mod ownership;
 mod structs;
 mod traits;
+mod macro_rules;
 
 fn main() {
     // enums::runner::run();
@@ -11,5 +12,6 @@ fn main() {
     // mod_samples::runner::run();
     // ownership::runner::run();
     // structs::runner::run();
-    traits::runner::run();
+    // traits::runner::run();
+    macro_rules::runner::run();
 }

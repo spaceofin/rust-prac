@@ -12,6 +12,6 @@ fn main() {
     // mod_samples::runner::run();
     // ownership::runner::run();
     // structs::runner::run();
-    // traits::runner::run();
-    macro_rules::runner::run();
+    traits::runner::run();
+    // macro_rules::runner::run();
 }

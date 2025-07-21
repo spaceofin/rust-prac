@@ -3,4 +3,5 @@
 #![allow(unused_variables)]
 
 pub mod basic_examples;
+pub mod bounds;
 pub mod runner;

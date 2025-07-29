@@ -1,2 +1,2 @@
 [workspace] 
-members = ["axum-basics"]
+members = ["axum-basics", "tokio-basics"]

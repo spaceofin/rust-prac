@@ -1,5 +1,5 @@
 use std::{thread, time::Duration};
-use tokio::time::{sleep, Duration as TokioDuration};
+use tokio::time::{sleep};
 use futures::join;
 
 fn sync_wait_and_print(id: u8) {
@@ -10,7 +10,7 @@ fn sync_wait_and_print(id: u8) {
 
 async fn async_wait_and_print(id: u8) {
     println!("Async: Start task {}", id);
-    sleep(TokioDuration::from_secs(5)).await;
+    sleep(Duration::from_secs(5)).await;
     println!("Async: End task {}", id);
 }
 

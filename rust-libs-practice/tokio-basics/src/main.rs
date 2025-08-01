@@ -9,7 +9,7 @@ async fn main() {
 
         loop {
             let (socket, _) = listener.accept().await.unwrap();
-            process(socket).await;
+            process_redis_commands(socket).await;
         }
     };
 
@@ -19,7 +19,7 @@ async fn main() {
         loop {
             let (socket, _) = listener.accept().await.unwrap();
             tokio::spawn(async move {
-                process(socket).await;
+                process_redis_connection(socket).await;
             });
         }
     };
@@ -27,7 +27,7 @@ async fn main() {
     tokio::join!(server1, server2);
 }
 
-async fn process(socket: TcpStream) {
+async fn process_redis_connection(socket: TcpStream) {
     // The `Connection` lets us read/write redis **frames** instead of
     // byte streams. The `Connection` type is defined by mini-redis.
     println!("New Task Started.");
@@ -43,4 +43,42 @@ async fn process(socket: TcpStream) {
     }
 
     println!("Connection closed");
+}
+
+async fn process_redis_commands(socket: TcpStream) {
+    use mini_redis::Command::{self, Get, Set};
+    use std::collections::HashMap;
+
+    // A hashmap is used to store data
+    let mut db = HashMap::new();
+
+    db.insert("test key".to_string(), "test value".as_bytes().to_vec());
+
+    let mut connection = Connection::new(socket);
+
+    while let Some(frame) = connection.read_frame().await.unwrap() {
+        let response = match Command::from_frame(frame).unwrap() {
+            Set(cmd) => {
+                // The value is stored as `Vec<u8>`
+                db.insert(cmd.key().to_string(), cmd.value().to_vec());
+                println!("Inserted key: {}", cmd.key());
+                Frame::Simple("OK".to_string())
+            }
+            Get(cmd) => {
+                if let Some(value) = db.get(cmd.key()) {
+                    // `Frame::Bulk` expects data to be of type `Bytes`. This
+                    // `&Vec<u8>` is converted to `Bytes` using `into()`.
+                    println!("Found key: {}", cmd.key());
+                    Frame::Bulk(value.clone().into())
+                } else {
+                    println!("Key not found: {}", cmd.key());
+                    Frame::Null
+                }
+            }
+            cmd => panic!("unimplemented {:?}", cmd),
+        };
+
+        // Write the response to the client
+        connection.write_frame(&response).await.unwrap();
+    }
 }

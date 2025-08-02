@@ -6,6 +6,7 @@ mod structs;
 mod traits;
 mod macro_rules;
 mod generics;
+mod async_and_future;
 
 fn main() {
     // enums::runner::run();
@@ -15,5 +16,6 @@ fn main() {
     // structs::runner::run();
     // traits::runner::run();
     // macro_rules::runner::run();
-    generics::runner::run();
+    // generics::runner::run();
+    async_and_future::runner::run();
 }

@@ -7,6 +7,7 @@ mod traits;
 mod macro_rules;
 mod generics;
 mod async_and_future;
+mod concurrency;
 
 fn main() {
     // enums::runner::run();
@@ -17,5 +18,6 @@ fn main() {
     // traits::runner::run();
     // macro_rules::runner::run();
     // generics::runner::run();
-    async_and_future::runner::run();
+    // async_and_future::runner::run();
+    concurrency::runner::run();
 }

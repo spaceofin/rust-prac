@@ -8,6 +8,7 @@ mod macro_rules;
 mod generics;
 mod async_and_future;
 mod concurrency;
+mod error_handling;
 
 fn main() {
     // enums::runner::run();
@@ -19,5 +20,6 @@ fn main() {
     // macro_rules::runner::run();
     // generics::runner::run();
     // async_and_future::runner::run();
-    concurrency::runner::run();
+    // concurrency::runner::run();
+    error_handling::runner::run();
 }

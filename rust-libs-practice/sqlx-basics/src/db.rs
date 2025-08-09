@@ -1,34 +1,78 @@
-use sqlx::{SqlitePool, Row};
+use sqlx::{PgPool, MySqlPool, SqlitePool, Row};
 use sqlx::sqlite::SqliteConnectOptions;
 use std::str::FromStr;
-use std::error::Error;
+use std::env;
 
-pub async fn create_pool() -> Result<SqlitePool, Box<dyn Error>> {
-    let options = SqliteConnectOptions::from_str("sqlite:data/user.db")?
+pub async fn create_postgres_pool() -> Result<PgPool, sqlx::Error> {
+    let database_url = env::var("POSTGRES_DATABASE_URL")
+        .expect("DATABASE_URL must be set");
+    let pool = PgPool::connect(&database_url).await?;
+    Ok(pool)
+}
+
+pub async fn create_mysql_pool() -> Result<MySqlPool, sqlx::Error> {
+    let database_url = env::var("MYSQL_DATABASE_URL")
+        .expect("DATABASE_URL must be set");
+    let pool = MySqlPool::connect(&database_url).await?;
+    Ok(pool)
+}
+
+
+pub async fn create_sqlite_pool() -> Result<SqlitePool, sqlx::Error> {
+    let database_url = "sqlite:data/user.db";
+    let options = SqliteConnectOptions::from_str(database_url)?
         .create_if_missing(true);
     let pool = SqlitePool::connect_with(options).await?;
     Ok(pool)
 }
 
-pub async fn init_db(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
-    sqlx::query(
-        r#"
+pub async fn init_postgres_db(pool: &PgPool) -> Result<(), sqlx::Error> {
+    let sql = r#"
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL UNIQUE,
+            active BOOLEAN NOT NULL DEFAULT TRUE
+        )
+    "#;
+
+    sqlx::query(sql).execute(pool).await?;
+    println!("Postgres DB initialized");
+    Ok(())
+}
+
+pub async fn init_mysql_db(pool: &MySqlPool) -> Result<(), sqlx::Error> {
+    let sql = r#"
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(255) NOT NULL UNIQUE,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            active BOOLEAN NOT NULL DEFAULT TRUE
+        )
+    "#;
+
+    sqlx::query(sql).execute(pool).await?;
+    println!("MySQL DB initialized");
+    Ok(())
+}
+
+pub async fn init_sqlite_db(pool: &SqlitePool) -> Result<(), sqlx::Error> {
+    let sql = r#"
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
             email TEXT NOT NULL UNIQUE,
             active BOOLEAN NOT NULL DEFAULT 1
         )
-        "#
-    )
-    .execute(pool)
-    .await?;
+    "#;
 
+    sqlx::query(sql).execute(pool).await?;
+    println!("SQLite DB initialized");
     Ok(())
 }
 
-pub async fn print_db_schema(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
-    println!("------------------------------Database Tables------------------------------");
+pub async fn print_sqlite_db_schema(pool: &SqlitePool) -> Result<(), sqlx::Error> {
+    println!("------------------------------SQLite Database Tables------------------------------");
 
     let tables = sqlx::query("SELECT name, sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
         .fetch_all(pool)

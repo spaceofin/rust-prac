@@ -1,6 +1,8 @@
 use std::panic;
 use std::num::ParseIntError;
 
+type ParseIntResult<T> = Result<T, ParseIntError>;
+
 fn multiply_and_print_result(first_number_str: &str, second_number_str: &str) {
   let result = panic::catch_unwind(|| {
     let first_number = first_number_str.parse::<i32>().unwrap();
@@ -14,7 +16,7 @@ fn multiply_and_print_result(first_number_str: &str, second_number_str: &str) {
   }
 }
 
-fn multiply_with_match(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
+fn multiply_with_match(first_number_str: &str, second_number_str: &str) -> ParseIntResult<i32> {
     match first_number_str.parse::<i32>() {
         Ok(first_number)  => {
             match second_number_str.parse::<i32>() {
@@ -28,13 +30,13 @@ fn multiply_with_match(first_number_str: &str, second_number_str: &str) -> Resul
     }
 }
 
-fn multiply_with_combinators(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
+fn multiply_with_combinators(first_number_str: &str, second_number_str: &str) -> ParseIntResult<i32> {
     first_number_str.parse::<i32>().and_then(|first_number| {
         second_number_str.parse::<i32>().map(|second_number| first_number * second_number)
     })
 }
 
-fn print_result(result: Result<i32, ParseIntError>) {
+fn print_result(result: ParseIntResult<i32>) {
     match result {
         Ok(n)  => println!("n is {}", n),
         Err(e) => println!("Error: {:?}", e),

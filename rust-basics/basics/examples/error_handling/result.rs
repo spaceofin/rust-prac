@@ -36,6 +36,27 @@ fn multiply_with_combinators(first_number_str: &str, second_number_str: &str) ->
     })
 }
 
+fn multiply_with_early_returns(first_number_str: &str, second_number_str: &str) -> ParseIntResult<i32> {
+    let first_number = match first_number_str.parse::<i32>() {
+        Ok(first_number)  => first_number,
+        Err(e) => return Err(e),
+    };
+
+    let second_number = match second_number_str.parse::<i32>() {
+        Ok(second_number)  => second_number,
+        Err(e) => return Err(e),
+    };
+
+    Ok(first_number * second_number)
+}
+
+fn multiply_with_question_mark_operator(first_number_str: &str, second_number_str: &str) -> ParseIntResult<i32> {
+    let first_number = first_number_str.parse::<i32>()?;
+    let second_number = second_number_str.parse::<i32>()?;
+
+    Ok(first_number * second_number)
+}
+
 fn print_result(result: ParseIntResult<i32>) {
     match result {
         Ok(n)  => println!("n is {}", n),
@@ -58,5 +79,17 @@ pub fn result_demo() {
   let twenty = multiply_with_combinators("10", "2");
   print_result(twenty);
   let tt = multiply_with_combinators("t", "2");
+  print_result(tt);
+
+  println!("---------------multiply with early returns---------------");
+  let twenty = multiply_with_early_returns("10", "2");
+  print_result(twenty);
+  let tt = multiply_with_early_returns("t", "2");
+  print_result(tt);
+
+  println!("---------------multiply with ? operator---------------");
+  let twenty = multiply_with_question_mark_operator("10", "2");
+  print_result(twenty);
+  let tt = multiply_with_question_mark_operator("t", "2");
   print_result(tt);
 }

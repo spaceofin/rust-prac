@@ -1,3 +1,5 @@
+mod loggers_demo;
+
 fn main() {
-    println!("Hello, world!");
+    loggers_demo::simple_logger_demo::simple_logger_demo();
 }

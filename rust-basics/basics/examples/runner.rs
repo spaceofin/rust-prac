@@ -9,6 +9,7 @@ mod generics;
 mod async_and_future;
 mod concurrency;
 mod error_handling;
+mod smart_pointers;
 
 fn main() {
     // enums::runner::run();
@@ -21,5 +22,6 @@ fn main() {
     // generics::runner::run();
     // async_and_future::runner::run();
     // concurrency::runner::run();
-    error_handling::runner::run();
+    // error_handling::runner::run();
+    smart_pointers::runner::run();
 }

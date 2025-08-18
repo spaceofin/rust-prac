@@ -12,7 +12,7 @@ mod error_handling;
 mod smart_pointers;
 mod primitives;
 
-use custom_types::{enums, std_library_types, structs};
+use custom_types::{enums, std_library_types, structs, constants};
 
 fn main() {
     // enums::runner::run();
@@ -27,5 +27,6 @@ fn main() {
     // concurrency::runner::run();
     // error_handling::runner::run();
     // smart_pointers::runner::run();
-    primitives::runner::run();
+    // primitives::runner::run();
+    constants::constants_demo();
 }

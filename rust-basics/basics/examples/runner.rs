@@ -1,8 +1,8 @@
-mod enums;
-mod std_library_types;
+#![allow(unused_imports)]
+
+mod custom_types;
 mod mod_samples;
 mod ownership;
-mod structs;
 mod traits;
 mod macro_rules;
 mod generics;
@@ -11,6 +11,8 @@ mod concurrency;
 mod error_handling;
 mod smart_pointers;
 mod primitives;
+
+use custom_types::{enums, std_library_types, structs};
 
 fn main() {
     // enums::runner::run();

@@ -1,7 +1,14 @@
 use axum::{Router, routing::get, extract::{Path, Query}};
-use std::collections::HashMap;
+use serde::Deserialize;
 
-async fn greet_with_id(Path(id): Path<u32>) -> String {
+#[derive(Deserialize)]
+struct User {
+  id: Option<i32>,
+  name: Option<String>
+}
+
+
+async fn greet_with_id(Path(id): Path<i32>) -> String {
   format!("Welcome, number {}", id)
 }
 
@@ -9,20 +16,23 @@ async fn greet_with_name(Path(name): Path<String>) -> String {
   format!("Welcome, {}", name)
 }
 
-async fn greet(Path((id,name)): Path<(u32, String)>) -> String {
+async fn greet(Path((id,name)): Path<(i32, String)>) -> String {
   format!("Welcome, number {} {}", id, name)
 }
 
-async fn greet_with_id_query(Query(user): Query<HashMap<String, String>>) -> String {
-  format!("Welcome, number {}", user["id"].parse::<u32>().unwrap())
+async fn greet_with_id_query(Query(user): Query<User>) -> String {
+  format!("Welcome, number {}", user.id.unwrap_or(-1))
 }
 
-async fn greet_with_name_query(Query(user): Query<HashMap<String, String>>) -> String {
-  format!("Welcome, {}", user["name"])
+async fn greet_with_name_query(Query(user): Query<User>) -> String {
+  format!("Welcome, {}",  user.name.clone().unwrap_or("Anonymous".to_string()))
 }
 
-async fn greet_with_query(Query(user): Query<HashMap<String, String>>) -> String {
-  format!("Welcome, number {} {}", user["id"].parse::<u32>().unwrap(), user["name"])
+async fn greet_with_query(Query(user): Query<User>) -> String {
+  format!("Welcome, number {} {}", 
+    user.id.unwrap_or(-1), 
+    user.name.as_ref().unwrap_or(&"Anonymous".to_string())
+  )
 }
 
 

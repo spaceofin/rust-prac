@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(unused_imports)]
 
 mod custom_types;
@@ -11,6 +12,7 @@ mod concurrency;
 mod error_handling;
 mod smart_pointers;
 mod primitives;
+mod closures;
 
 use custom_types::{enums, std_library_types, structs, constants};
 
@@ -28,5 +30,6 @@ fn main() {
     // error_handling::runner::run();
     // smart_pointers::runner::run();
     // primitives::runner::run();
-    constants::constants_demo();
+    // constants::constants_demo();
+    closures::runner::run();
 }

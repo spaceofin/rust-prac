@@ -14,6 +14,7 @@ mod smart_pointers;
 mod primitives;
 mod closures;
 mod variables_and_types;
+mod conversion_and_expressions;
 
 use custom_types::{enums, std_library_types, structs, constants};
 
@@ -33,5 +34,6 @@ fn main() {
     // primitives::runner::run();
     // constants::constants_demo();
     // closures::runner::run();
-    variables_and_types::runner::run();
+    // variables_and_types::runner::run();
+    conversion_and_expressions::runner::run();
 }

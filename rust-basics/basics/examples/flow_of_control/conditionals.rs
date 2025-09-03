@@ -241,8 +241,132 @@ fn match_destructuring() {
     }
 }
 
+enum Temperature {
+    Celsius(i32),
+    Fahrenheit(i32),
+}
+
+fn print_temperature(temp: Temperature) {
+    match temp {
+        Temperature::Celsius(t) if t > 30 => println!("{}C is above 30 Celsius", t),
+        Temperature::Celsius(t) => println!("{}C is equal to or below 30 Celsius", t),
+        Temperature::Fahrenheit(t) if t > 86 => println!("{}F is above 86 Fahrenheit", t),
+        Temperature::Fahrenheit(t) => println!("{}F is equal to or below 86 Fahrenheit", t),
+    }
+}
+
+fn match_guards() {
+    loop {
+        print!("Enter a temperature(type 'exit' to quit): ");
+        io::stdout().flush().unwrap();
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
+        let input = input.trim();
+
+        if input.eq_ignore_ascii_case("exit") {
+            println!("Exiting the program.");
+            break; // exit the loop
+        }
+
+        let number: i32 = match input.parse() {
+            Ok(num) => num,
+            Err(_) => {
+                println!("Invalid input, not an integer.");
+                continue; 
+            }
+        };
+            
+        let celcius_temperature = Temperature::Celsius(number);
+        let fahrenhei_temperature = Temperature::Fahrenheit(number);
+
+        print_temperature(celcius_temperature);
+        print_temperature(fahrenhei_temperature);
+    }
+
+    println!();
+    let number: u8 = 4;
+    // Guards are ignored when checking if all cases are covered
+    match number {
+        i if i == 0 => println!("Zero"),
+        i if i > 0 => println!("Greater than zero"),
+        _ => unreachable!("Should never happen. But needed."),
+    }
+}
+
+fn match_binding() {
+    loop {
+        print!("Enter an age(type 'exit' to quit): ");
+        io::stdout().flush().unwrap();
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
+        let input = input.trim();
+
+        if input.eq_ignore_ascii_case("exit") {
+            println!("Exiting the program.");
+            break; // exit the loop
+        }
+
+        let age: u32 = match input.parse() {
+            Ok(num) => num,
+            Err(_) => {
+                println!("Invalid input, please enter a valid integer.");
+                continue; 
+            }
+        };
+            
+        println!("Tell me what type of person you are");
+
+        match age {
+            0             => println!("I haven't celebrated my first birthday yet"),
+            n @ 1  ..= 12 => println!("I'm a child of age {:?}", n),
+            n @ 13 ..= 19 => println!("I'm a teen of age {:?}", n),
+            n             => println!("I'm an old person of age {:?}", n),
+        }
+    }
+    
+    println!();
+
+    fn read_number() -> Option<u32> {
+        print!("Enter a non-negative number(type 'exit' to quit): ");
+        io::stdout().flush().unwrap();
+        
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).ok()?;
+        let input = input.trim();
+
+        if input.eq_ignore_ascii_case("exit") {
+            println!("Exiting the program.");
+            return None; 
+        }
+        
+        match input.parse::<u32>() {
+            Ok(num) => Some(num),
+            Err(_) => {
+                println!("Invalid input. Exiting program.");
+                None 
+            }
+        }
+    }
+
+    loop {
+        match read_number() {
+            Some(n @ 42) => { 
+                println!("The Answer: {}!", n);
+                break;
+            }
+            Some(n)      => println!("Not interesting... {}", n),
+            None            => break,
+        }
+    }
+
+}
+
 pub fn conditionals_demo() {
     // if_else_example();
     // match_example();
-    match_destructuring();
+    // match_destructuring();
+    // match_guards();
+    match_binding();
 }

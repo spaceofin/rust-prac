@@ -2,4 +2,5 @@
 
 pub mod mod_basic;
 pub mod mod_nested;
+pub mod visibility;
 pub mod runner;

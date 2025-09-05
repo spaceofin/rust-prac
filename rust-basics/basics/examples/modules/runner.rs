@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use super::visibility;
+
 mod sample_mod1 {
     mod sub1 {
         pub fn print_msg() {
@@ -44,7 +46,7 @@ fn print_file_mods() {
 
     use sample_mod1::sub3::print_msg1;
     use sample_mod1::sub3::{print_msg2, print_msg3};
-    use crate::mod_samples::runner::sample_mod1::sub3::print_msg4;
+    use crate::modules::runner::sample_mod1::sub3::print_msg4;
 
     // compile error: private module
     // sample_mod1::sub1::print_msg();
@@ -87,4 +89,8 @@ pub fn run() {
     println!();
     println!("-------Modules in mod_samples module-------");
     print_mod_samples();
+
+    println!();
+    println!("-------Visibility examples-------");
+    visibility::visibility_demo();
 }

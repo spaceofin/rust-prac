@@ -2,7 +2,7 @@
 #![allow(unused_imports)]
 
 mod custom_types;
-mod mod_samples;
+mod modules;
 mod ownership;
 mod traits;
 mod macro_rules;
@@ -22,7 +22,7 @@ use custom_types::{enums, std_library_types, structs, constants};
 fn main() {
     // enums::runner::run();
     // std_library_types::runner::run();
-    // mod_samples::runner::run();
+    modules::runner::run();
     // ownership::runner::run();
     // structs::runner::run();
     // traits::runner::run();
@@ -37,5 +37,5 @@ fn main() {
     // closures::runner::run();
     // variables_and_types::runner::run();
     // conversion_and_expressions::runner::run();
-    flow_of_control::runner::run();
+    // flow_of_control::runner::run();
 }

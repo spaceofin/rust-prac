@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 use super::visibility;
+use super::mod_examples;
 
 mod sample_mod1 {
     mod sub1 {
@@ -83,14 +84,18 @@ fn print_mod_samples() {
 
 
 pub fn run() {
-    println!("----------Modules in current file----------");
-    print_file_mods();
+    // println!("----------Modules in current file----------");
+    // print_file_mods();
 
-    println!();
-    println!("-------Modules in mod_samples module-------");
-    print_mod_samples();
+    // println!();
+    // println!("-------Modules in mod_samples module-------");
+    // print_mod_samples();
+
+    // println!();
+    // println!("-------Visibility examples-------");
+    // visibility::visibility_demo();
 
     println!();
     println!("-------Visibility examples-------");
-    visibility::visibility_demo();
+    mod_examples::mod_demo();
 }

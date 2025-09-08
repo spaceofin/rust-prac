@@ -16,13 +16,14 @@ mod closures;
 mod variables_and_types;
 mod conversion_and_expressions;
 mod flow_of_control;
+mod crates_and_cargo;
 
 use custom_types::{enums, std_library_types, structs, constants};
 
 fn main() {
     // enums::runner::run();
     // std_library_types::runner::run();
-    modules::runner::run();
+    // modules::runner::run();
     // ownership::runner::run();
     // structs::runner::run();
     // traits::runner::run();
@@ -38,4 +39,5 @@ fn main() {
     // variables_and_types::runner::run();
     // conversion_and_expressions::runner::run();
     // flow_of_control::runner::run();
+    crates_and_cargo::runner::run();
 }

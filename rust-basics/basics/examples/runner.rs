@@ -2,6 +2,7 @@
 #![allow(unused_imports)]
 
 mod custom_types;
+mod std_library_types;
 mod modules;
 mod ownership;
 mod traits;
@@ -18,14 +19,11 @@ mod conversion_and_expressions;
 mod flow_of_control;
 mod crates_and_cargo;
 
-use custom_types::{enums, std_library_types, structs, constants};
-
 fn main() {
-    // enums::runner::run();
+    // custom_types::runner::run();
     std_library_types::runner::run();
     // modules::runner::run();
     // ownership::runner::run();
-    // structs::runner::run();
     // traits::runner::run();
     // macro_rules::runner::run();
     // generics::runner::run();

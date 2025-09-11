@@ -2,6 +2,7 @@
 #![allow(dead_code)]
 
 use std::io::{self, Write};
+use crate::custom_types::{example_enums, linked_list};
 
 enum WebEvent {
      // An `enum` variant may either be `unit-like`,
@@ -32,7 +33,7 @@ fn inspect(event: WebEvent) {
 }
 
 fn print_webevents() {
-        let pressed = WebEvent::KeyPress('x');
+    let pressed = WebEvent::KeyPress('x');
     // `to_owned()` creates an owned `String` from a string slice.
     let pasted  = WebEvent::Paste("my text".to_owned());
     // let pasted = WebEvent::Paste("my text");
@@ -145,7 +146,7 @@ fn print_stage_level_and_role() {
     use Stage::{Beginner, Advanced};
     //use crate::Role::*;
     use Role::*;
-    use crate::enums::example_enums::Level::*;
+    use example_enums::Level::*;
 
     let stage = Beginner;
     // Equivalent to `Role::Student`.
@@ -171,7 +172,7 @@ fn print_stage_level_and_role() {
     }
 }
 
-type Operations = crate::enums::example_enums::VeryVerboseEnumOfThingsToDoWithNumbers;
+type Operations = example_enums::VeryVerboseEnumOfThingsToDoWithNumbers;
 
 fn run_operations() {
 
@@ -189,7 +190,7 @@ fn run_operations() {
 }
 
 fn print_colors_and_numbers() {
-    use crate::enums::example_enums::{Number, Color};
+    use example_enums::{Number, Color};
 
     // `enums` can be cast as integers.
     println!("zero is {:?}", Number::Zero);
@@ -208,7 +209,7 @@ fn print_colors_and_numbers() {
 }
 
 fn print_linked_list_upto(n: u32) {
-    use crate::enums::linked_list::{List};
+    use linked_list::{List};
     // Create an empty linked list
     let mut list = List::new();
 
@@ -241,7 +242,7 @@ fn read_linked_list_length() {
     print_linked_list_upto(n);
 }
 
-pub fn run(){
+pub fn enums_demo(){
     // print_webevents();
     // handle_webevents();
     // print_stage_level_and_role();

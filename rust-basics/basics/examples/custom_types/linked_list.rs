@@ -1,4 +1,4 @@
-use crate::enums::linked_list::List::*;
+use List::*;
 
 pub enum List {
     // Cons: Tuple struct that wraps an element and a pointer to the next node

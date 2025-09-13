@@ -4,4 +4,5 @@ pub mod string_examples;
 pub mod box_examples;
 pub mod option_and_result;
 pub mod iteration;
+pub mod vectors;
 pub mod runner;

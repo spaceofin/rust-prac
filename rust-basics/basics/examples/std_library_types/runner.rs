@@ -3,6 +3,7 @@ use super::box_examples;
 use super::option_and_result;
 use super::iteration;
 use super::vectors;
+use super::hashmap;
 
 pub fn run() {
     // println!("----------Basic String Examples----------");
@@ -13,5 +14,6 @@ pub fn run() {
     // box_examples::box_examples();
     // option_and_result::option_and_result_demo();
     // iteration::iteration_demo();
-    vectors::vectors_demo();
+    // vectors::vectors_demo();
+    hashmap::hashmap_demo();
 }

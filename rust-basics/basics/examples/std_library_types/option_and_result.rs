@@ -30,6 +30,7 @@ fn option_example() {
     // println!("{:?} unwraps to {:?}", none, none.unwrap()); // Runtime error
 }
 
+
 mod checked {
     // Mathematical "errors" we want to catch
     #[derive(Debug)]
@@ -65,49 +66,79 @@ mod checked {
             Ok(x.ln())
         }
     }
-}
 
-// `op(x, y)` === `sqrt(ln(x / y))`
-fn op(x: f64, y: f64) -> Option<f64> {
-    // This is a three level match pyramid!
-    match checked::div(x, y) {
-        Err(why) => {
-            println!("div error: {:?}",why);
-            return None;
-            // panic!("{:?}", why),
-        },
-        Ok(ratio) => {
-            println!("div result: {:?}",ratio);
-            match checked::ln(ratio) {
-                Err(why) => {
-                    println!("ratio error: {:?}",why);
-                    return None;
-                    // panic!("{:?}", why),
-                },
-                Ok(ln) => {
-                    println!("ln result: {:?}",ln);
-                    match checked::sqrt(ln) {
-                        Err(why) => {
-                            println!("ln error: {:?}",why);
-                            return None;
-                            // panic!("{:?}", why),
-                        },
-                        Ok(sqrt) => {
-                            println!("sqrt result: {:?}",sqrt);
-                            Some(sqrt)
-                        },
-                    }
-                },
-            }
-        },
+    // `op(x, y)` === `sqrt(ln(x / y))`
+    pub fn op(x: f64, y: f64) -> Option<f64> {
+        // This is a three level match pyramid!
+        match div(x, y) {
+            Err(why) => {
+                println!("div error: {:?}",why);
+                return None;
+                // panic!("{:?}", why),
+            },
+            Ok(ratio) => {
+                println!("div result: {:?}",ratio);
+                match ln(ratio) {
+                    Err(why) => {
+                        println!("ratio error: {:?}",why);
+                        return None;
+                        // panic!("{:?}", why),
+                    },
+                    Ok(ln) => {
+                        println!("ln result: {:?}",ln);
+                        match sqrt(ln) {
+                            Err(why) => {
+                                println!("ln error: {:?}",why);
+                                return None;
+                                // panic!("{:?}", why),
+                            },
+                            Ok(sqrt) => {
+                                println!("sqrt result: {:?}",sqrt);
+                                Some(sqrt)
+                            },
+                        }
+                    },
+                }
+            },
+        }
+    }
+
+    fn op_(x: f64, y: f64) -> MathResult {
+        let ratio = div(x, y)?;
+        println!("div result: {}",ratio);
+        let ln = ln(ratio)?;
+        println!("ln result: {}",ln);
+        sqrt(ln)
+    }
+
+    pub fn op_clean(x: f64, y: f64) {
+        match op_(x,y) {
+            Err(why) => println!("{}", match why {
+                MathError::NonPositiveLogarithm
+                    => "logarithm of non-positive number",
+                MathError::DivisionByZero
+                    => "division by zero",
+                MathError::NegativeSquareRoot
+                    => "square root of negative number",
+            }),
+            Ok(value) => println!("sqrt result: {}", value),
+        }
     }
 }
 
 fn result_example() {
     println!();
-    println!("___op output: {}", op(1.0, 10.0).map_or("failed".to_string(), |v| v.to_string()));
+    println!("___op output: {}", checked::op(1.0, 10.0).map_or("failed".to_string(), |v| v.to_string()));
     println!();
-    println!("___op output: {}", op(10.0, 10.0).map_or("failed".to_string(), |v| v.to_string()));
+    println!("___op output: {}", checked::op(10.0, 10.0).map_or("failed".to_string(), |v| v.to_string()));
+    println!();
+
+    println!("___op_clean(10.0, 10.0) output: ");
+    checked::op_clean(10.0, 10.0);
+    println!("___op_clean(1.0, 0.0) output: ");
+    checked::op_clean(1.0, 0.0);
+    println!("___op_clean(1.0, 10.0) output: ");
+    checked::op_clean(1.0, 10.0);
 }
 
 

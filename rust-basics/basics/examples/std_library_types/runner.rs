@@ -12,8 +12,8 @@ pub fn run() {
     // println!("-------------String Examples-------------");
     // string_examples();
     // box_examples::box_examples();
-    // option_and_result::option_and_result_demo();
+    option_and_result::option_and_result_demo();
     // iteration::iteration_demo();
     // vectors::vectors_demo();
-    hashmap::hashmap_demo();
+    // hashmap::hashmap_demo();
 }

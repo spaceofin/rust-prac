@@ -6,4 +6,5 @@ pub mod option_and_result;
 pub mod iteration;
 pub mod vectors;
 pub mod hashmap;
+pub mod rc_and_arc;
 pub mod runner;

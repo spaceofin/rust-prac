@@ -16,6 +16,6 @@ pub fn run() {
     // option_and_result::option_and_result_demo();
     // iteration::iteration_demo();
     // vectors::vectors_demo();
-    // hashmap::hashmap_demo();
-    rc_and_arc::rc_and_arc_demo();
+    hashmap::hashmap_demo();
+    // rc_and_arc::rc_and_arc_demo();
 }

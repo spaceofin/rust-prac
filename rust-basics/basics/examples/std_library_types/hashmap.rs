@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap,HashSet};
 use std::any::type_name;
 use std::io::{self, Write};
 
@@ -135,7 +135,47 @@ fn hashmap_varied_keys() {
     try_logon(&test_accounts, username, password);
 }
 
+
+fn try_insert(set: &mut HashSet<i32>, set_name: &str, value: i32) {
+    set.insert(value)
+        .then(|| println!("[{}] Insert {} succeeded!", set_name, value))
+        .unwrap_or_else(|| println!("[{}] Insert {} failed! Value already exists. Current set: {:?}", set_name, value, set));
+}
+
+fn try_contains(set: &HashSet<i32>, set_name: &str, value: i32) {
+    set.contains(&value)
+        .then(|| println!("[{}] Value {} is in the set. Current set: {:?}", set_name, value, set))
+        .unwrap_or_else(|| println!("[{}] Value {} is not in the set. Current set: {:?}", set_name, value, set));
+}
+
+fn hashset_examples() {
+    let mut a: HashSet<i32> = vec![1i32, 2, 3].into_iter().collect();
+    let mut b: HashSet<i32> = vec![2i32, 3, 4].into_iter().collect();
+
+    try_insert(&mut a, "a", 4);
+    try_contains(&a, "a", 4);
+
+    try_insert(&mut b, "b", 4);
+    try_insert(&mut b, "b", 5);
+    try_contains(&b, "b", 1);
+    try_contains(&b, "b", 5);
+
+    // If a collection's element type implements `Debug`,
+    // then the collection implements `Debug`.
+    // It usually prints its elements in the format `[elem1, elem2, ...]`
+    println!("A: {:?}", a);
+    println!("B: {:?}", b);
+
+    // Print results in arbitrary order
+    println!("Union: {:?}", a.union(&b).collect::<Vec<&i32>>());
+    println!("Difference: {:?}", a.difference(&b).collect::<Vec<&i32>>());
+    println!("Intersection: {:?}", a.intersection(&b).collect::<Vec<&i32>>());
+    println!("Symmetric Difference: {:?}",
+             a.symmetric_difference(&b).collect::<Vec<&i32>>());
+}
+
 pub fn hashmap_demo() {
     // hashmap_basic();
-    hashmap_varied_keys();
+    // hashmap_varied_keys();
+    hashset_examples();
 }

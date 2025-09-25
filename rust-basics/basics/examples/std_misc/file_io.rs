@@ -1,10 +1,10 @@
 use std::fs::File;
 use std::io::{prelude::*, self};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
-fn get_base_path() -> &'static Path {
+fn get_base_path() -> PathBuf {
     let source_file = file!();
-    Path::new(source_file).parent().unwrap()
+    Path::new(source_file).parent().unwrap().to_path_buf()
 }
 
 fn enter_filename() -> String {

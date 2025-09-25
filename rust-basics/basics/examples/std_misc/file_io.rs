@@ -1,5 +1,5 @@
-use std::fs::File;
-use std::io::{prelude::*, self};
+use std::fs::{File, read_to_string};
+use std::io::{prelude::*, self, BufRead};
 use std::path::{Path, PathBuf};
 
 fn get_base_path() -> PathBuf {
@@ -76,7 +76,53 @@ fn create_example() {
     }
 }
 
+
+fn read_lines_loop<P: AsRef<Path>>(path: P) -> Vec<String> {
+    let mut result = Vec::new();
+    for line in read_to_string(path).unwrap().lines() {
+        result.push(line.to_string())
+    }
+    result
+}
+
+fn read_lines_iter<P: AsRef<Path>>(path: P) -> Vec<String> {
+    read_to_string(path) 
+        .unwrap()  // panic on possible file-reading errors
+        .lines()  // split the string into an iterator of string slices
+        .map(String::from)  // make each slice into a string
+        .collect()  // gather them together into a vector
+}
+
+// The output is wrapped in a Result to allow matching on errors.
+// Returns an Iterator to the Reader of the lines of the file.
+fn read_lines<P: AsRef<Path>>(path: P) -> io::Result<io::Lines<io::BufReader<File>>> {
+    let file = File::open(path)?;
+    Ok(io::BufReader::new(file).lines())
+}
+
+fn read_lines_examples() {
+    let base_path: PathBuf = get_base_path();
+    let filename: String = enter_filename();
+    let path: PathBuf = base_path.join("files").join(&filename);
+    
+    let loop_result = read_lines_loop(&path);
+    println!("read_lines_loop result:\n {:?}\n", loop_result);
+
+    let iter_result = read_lines_iter(&path);
+    println!("read_lines_iter result:\n {:?}\n", iter_result);
+
+    println!("read_lines result:");
+    if let Ok(lines) = read_lines(&path) {
+        // Consumes the iterator, returns an (Optional) String
+        for line in lines.map_while(Result::ok) {
+            println!("{}", line);
+        }
+    }
+}
+
+
 pub fn file_io_demo() {
     // open_example();
-    create_example();
+    // create_example();
+    read_lines_examples();
 }

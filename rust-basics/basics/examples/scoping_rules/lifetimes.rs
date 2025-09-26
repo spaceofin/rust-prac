@@ -1,4 +1,5 @@
 use rand::Fill;
+use std::fmt::Debug;
 
 static NUM: i32 = 18;
 
@@ -61,7 +62,43 @@ fn compare_random_vectors() {
     }
 }
 
+// fn print_it<T: Debug + 'static>(input: T) -> T { ... }
+fn print_it(input: impl Debug + 'static ) -> impl Debug + 'static {
+    println!( "'static value passed in is: {:?}", input);
+    input
+}
+
+fn trait_bound() {
+    // i is owned and contains no references, thus it's 'static
+    let mut i: i32 = 5;
+    print_it(i);
+    i = 7;
+    print_it(i);
+    // i32 implements the Copy trait.
+    println!("i: {}",i);
+
+    // Compile Error:
+    // &i only has the lifetime defined by the scope of trait_bound(), so it's not 'static:
+    // print_it(&i);
+
+    let static_s = "hello";
+    print_it(static_s);
+    let s = String::from("world");
+    let returned_s = print_it(s);
+    // Compile Error: s already moved. String is an owned type.
+    // println!("s: {}",s);
+    println!("returned s: {:?}", returned_s);
+
+    let boxed: Box<i32> = Box::new(10);
+    let returned_boxed = print_it(boxed);
+    // Compile Error: Box<T> is an owned type.
+    // println!("boxed: {}",boxed);
+    println!("returned boxed: {:?}", returned_boxed);
+}
+
+
 pub fn lifetimes_demo() {
     // reference_lifetime();
-    compare_random_vectors();
+    // compare_random_vectors();
+    trait_bound();
 }

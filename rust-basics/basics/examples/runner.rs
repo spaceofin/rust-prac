@@ -19,6 +19,7 @@ mod conversion_and_expressions;
 mod flow_of_control;
 mod crates_and_cargo;
 mod std_misc;
+mod scoping_rules;
 
 fn main() {
     // custom_types::runner::run();
@@ -39,5 +40,6 @@ fn main() {
     // conversion_and_expressions::runner::run();
     // flow_of_control::runner::run();
     // crates_and_cargo::runner::run();
-    std_misc::runner::run();
+    // std_misc::runner::run();
+    scoping_rules::runner::run();
 }

@@ -96,9 +96,52 @@ fn trait_bound() {
     println!("returned boxed: {:?}", returned_boxed);
 }
 
+// 'a and 'b must live at least as long as print_refs.
+fn print_refs<'a, 'b>(x: &'a i32, y: &'b i32) {
+    println!("x is {} and y is {}", x, y);
+}
+
+fn failed_borrow<'a>() {
+    let _x = 12;
+    // 'a is an explicit type annotation
+    // Compile Error:
+    // the lifetime of '&_x' si shorter than that of '_y'
+    // A short lifetime cannot be coerced into a longer one.
+    // let _y: &'a i32 = &_x;
+}
+
+fn explicit_annotation() {
+    let (four, nine) = (4, 9);
+    print_refs(&four, &nine);
+}
+
+// 'elided_input' and 'annotated_input' essentially have identical signatures
+// the lifetime of 'elided_input' is inferred by the compiler
+fn elided_input(x: &i32) {
+    println!("`elided_input`: {}", x);
+}
+fn annotated_input<'a>(x: &'a i32) {
+    println!("`annotated_input`: {}", x);
+}
+
+// 'elided_pass' and 'annotated_pass' have identical signatures
+fn elided_pass(x: &i32) -> &i32 { x }
+fn annotated_pass<'a>(x: &'a i32) -> &'a i32 { x }
+
+fn elision() {
+    let x = 3;
+
+    elided_input(&x);
+    annotated_input(&x);
+
+    println!("`elided_pass`: {}", elided_pass(&x));
+    println!("`annotated_pass`: {}", annotated_pass(&x));
+}
 
 pub fn lifetimes_demo() {
     // reference_lifetime();
     // compare_random_vectors();
-    trait_bound();
+    // trait_bound();
+    // explicit_annotation();
+    elision();
 }

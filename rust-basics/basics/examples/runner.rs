@@ -28,7 +28,7 @@ fn main() {
     // ownership::runner::run();
     // traits::runner::run();
     // macro_rules::runner::run();
-    // generics::runner::run();
+    generics::runner::run();
     // async_and_future::runner::run();
     // concurrency::runner::run();
     // error_handling::runner::run();
@@ -41,5 +41,5 @@ fn main() {
     // flow_of_control::runner::run();
     // crates_and_cargo::runner::run();
     // std_misc::runner::run();
-    scoping_rules::runner::run();
+    // scoping_rules::runner::run();
 }

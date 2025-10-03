@@ -4,4 +4,5 @@
 
 pub mod basic_examples;
 pub mod bounds;
+pub mod where_and_newtype;
 pub mod runner;

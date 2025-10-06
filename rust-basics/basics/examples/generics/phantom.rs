@@ -87,7 +87,54 @@ fn unit_clarification() {
     println!("one meter + two_meter = {:?} mm", three_meters.0);
 }
 
+// Implementation without using PhantomData
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum Unit {
+    Inch,
+    Mm,
+}
+
+struct LengthValue(f64, Unit);
+
+impl Add for LengthValue {
+    type Output =  Option<LengthValue>;
+
+    fn add(self, rhs: LengthValue) -> Option<LengthValue> {
+        if self.1 != rhs.1 { return None }
+        Some(LengthValue(self.0 + rhs.0, self.1))
+    }
+}
+
+fn unit_clarification_compare() {
+    let one_foot: LengthValue = LengthValue(12.0, Unit::Inch);
+    let two_foot: LengthValue = LengthValue(24.0, Unit::Inch);
+    let one_meter: LengthValue = LengthValue(1000.0, Unit::Mm);
+    let two_meter: LengthValue = LengthValue(2000.0, Unit::Mm);
+
+    let three_feet = one_foot + two_foot;
+    let three_meter = one_meter + two_meter;
+
+    match three_feet {
+        Some(result) => {
+            println!("one foot + two_foot = {:?} in", result.0);
+        }
+        None => {
+            println!("Unit mismatch!");
+        }
+    }
+
+    match three_meter {
+        Some(result) => {
+            println!("one meter + two_meter = {:?} mm", result.0);
+        }
+        None => {
+            println!("Unit mismatch!");
+        }
+    }
+}
+
 pub fn phantom_demo() {
     // phantom_example();
-    unit_clarification();
+    // unit_clarification();
+    unit_clarification_compare();
 }

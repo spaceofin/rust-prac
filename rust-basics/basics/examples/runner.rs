@@ -20,6 +20,7 @@ mod flow_of_control;
 mod crates_and_cargo;
 mod std_misc;
 mod scoping_rules;
+mod functions;
 
 fn main() {
     // custom_types::runner::run();
@@ -28,7 +29,7 @@ fn main() {
     // ownership::runner::run();
     // traits::runner::run();
     // macro_rules::runner::run();
-    generics::runner::run();
+    // generics::runner::run();
     // async_and_future::runner::run();
     // concurrency::runner::run();
     // error_handling::runner::run();
@@ -42,4 +43,5 @@ fn main() {
     // crates_and_cargo::runner::run();
     // std_misc::runner::run();
     // scoping_rules::runner::run();
+    functions::runner::run();
 }

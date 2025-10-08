@@ -13,7 +13,6 @@ mod concurrency;
 mod error_handling;
 mod smart_pointers;
 mod primitives;
-mod closures;
 mod variables_and_types;
 mod conversion_and_expressions;
 mod flow_of_control;
@@ -36,7 +35,6 @@ fn main() {
     // smart_pointers::runner::run();
     // primitives::runner::run();
     // constants::constants_demo();
-    // closures::runner::run();
     // variables_and_types::runner::run();
     // conversion_and_expressions::runner::run();
     // flow_of_control::runner::run();

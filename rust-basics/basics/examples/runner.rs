@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
+#![allow(unused_variables)]
 
 mod custom_types;
 mod std_library_types;
@@ -24,7 +25,7 @@ mod functions;
 fn main() {
     // custom_types::runner::run();
     // std_library_types::runner::run();
-    // modules::runner::run();
+    modules::runner::run();
     // ownership::runner::run();
     // traits::runner::run();
     // macro_rules::runner::run();
@@ -41,5 +42,5 @@ fn main() {
     // crates_and_cargo::runner::run();
     // std_misc::runner::run();
     // scoping_rules::runner::run();
-    functions::runner::run();
+    // functions::runner::run();
 }

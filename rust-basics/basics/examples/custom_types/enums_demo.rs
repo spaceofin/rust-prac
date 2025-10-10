@@ -1,5 +1,5 @@
 // An attribute to hide warnings for unused code.
-#![allow(dead_code)]
+
 
 use std::io::{self, Write};
 use crate::custom_types::{example_enums, linked_list};

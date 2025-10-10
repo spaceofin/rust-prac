@@ -67,7 +67,6 @@ fn match_example () {
     }
 }
 
-#[allow(dead_code)]
 enum Color {
     Red,
     Blue,

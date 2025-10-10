@@ -1,3 +1,5 @@
+#[allow(path_statements)]
+#[allow(unused_must_use)]
 fn kinds_of_statements() {
     // variable binding is statements.
     let x = 5;

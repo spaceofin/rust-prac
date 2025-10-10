@@ -1,3 +1,4 @@
+
 fn loops (){
     println!("----------infinite loop----------");
     let mut count = 0u32;
@@ -24,7 +25,8 @@ fn loops (){
             //break; // This would break only the inner loop
             break 'outer;
         }
-        println!("This point will never be reached");
+        #[allow(unreachable_code)]
+        { println!("This point will never be reached"); }
     }
     println!("Exited the outer loop");
 

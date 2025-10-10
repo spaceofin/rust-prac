@@ -1,6 +1,5 @@
 use std::any::type_name;
 
-#[allow(dead_code)]
 fn print_type_of<T>(_: &T) {
     println!("type: {}", type_name::<T>());
 }

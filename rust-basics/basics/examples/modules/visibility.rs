@@ -1,3 +1,5 @@
+fn test() {}
+
 mod my_mod {
     // private
     fn private_function() {
@@ -22,7 +24,6 @@ mod my_mod {
             println!("called `my_mod::nested::function()`");
         }
 
-        #[allow(dead_code)]
         fn private_function() {
             println!("called `my_mod::nested::private_function()`");
         }
@@ -59,14 +60,12 @@ mod my_mod {
 
     // Nested modules follow the same rules for visibility
     mod private_nested {
-        #[allow(dead_code)]
         pub fn function() {
             println!("called `my_mod::private_nested::function()`");
         }
 
         // Private parent items will still restrict the visibility of a child item,
         // even if it is declared as visible within a bigger scope.
-        #[allow(dead_code)]
         pub(crate) fn restricted_function() {
             println!("called `my_mod::private_nested::restricted_function()`");
         }

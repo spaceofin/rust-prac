@@ -1,6 +1,4 @@
-#![allow(dead_code)]
-
-use super::visibility;
+use super::mod_nested;
 use super::mod_examples;
 
 mod sample_mod1 {

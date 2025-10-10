@@ -1,5 +1,13 @@
-#![allow(dead_code)]
 #![allow(unused_imports)]
+#![allow(dead_code)]
+
+pub mod mod_basic;
+pub mod mod_nested;
+pub mod visibility;
+pub mod mod_examples;
+pub mod sub_modules;
+pub mod mod_functions;
+pub mod runner;
 
 pub mod deeply {
     pub mod nested {
@@ -26,11 +34,3 @@ pub mod cool {
     }
 }
 
-
-pub mod mod_basic;
-pub mod mod_nested;
-pub mod visibility;
-pub mod mod_examples;
-pub mod sub_modules;
-pub mod mod_functions;
-pub mod runner;

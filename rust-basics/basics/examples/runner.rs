@@ -25,7 +25,7 @@ mod functions;
 fn main() {
     // custom_types::runner::run();
     // std_library_types::runner::run();
-    modules::runner::run();
+    // modules::runner::run();
     // ownership::runner::run();
     // traits::runner::run();
     // macro_rules::runner::run();
@@ -41,6 +41,6 @@ fn main() {
     // flow_of_control::runner::run();
     // crates_and_cargo::runner::run();
     // std_misc::runner::run();
-    // scoping_rules::runner::run();
+    scoping_rules::runner::run();
     // functions::runner::run();
 }

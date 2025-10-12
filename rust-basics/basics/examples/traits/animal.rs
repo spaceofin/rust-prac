@@ -116,7 +116,7 @@ impl Animal for Cow {
     }
 }
 
-pub fn cat_demo() {
+fn cat_example() {
     let mut muffin: Cat = Animal::new("Muffin");
 
     muffin.status();
@@ -131,7 +131,7 @@ pub fn cat_demo() {
     muffin.talk();
 }
 
-pub fn animal_demo() {
+fn animal_examples() {
 
     let simba: Cat = Animal::new("simba");
     let dolly: Sheep = Animal::new("dolly");
@@ -148,5 +148,8 @@ pub fn animal_demo() {
     anonymous_cat.talk();
     anonymous_sheep.talk();
     anonymous_cow.talk();
+}
 
+pub fn animal_demo() {
+    animal_examples();
 }

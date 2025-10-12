@@ -3,6 +3,7 @@ use super::functions_and_methods;
 use super::structs_and_traits;
 use super::bounds_and_coercion;
 use super::raii;
+use super::ownership_and_moves;
 
 
 pub fn run() {
@@ -10,5 +11,6 @@ pub fn run() {
     // functions_and_methods::functions_and_methods_demo();
     // structs_and_traits::structs_and_traits_demo();
     // bounds_and_coercion::bounds_and_coercion_demo();
-    raii::raii_demo();
+    // raii::raii_demo();
+    ownership_and_moves::ownership_and_moves_demo();
 }

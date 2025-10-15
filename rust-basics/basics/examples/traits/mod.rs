@@ -4,4 +4,5 @@ pub mod binary_operators;
 pub mod drop;
 pub mod derive;
 pub mod iterators;
+pub mod traits;
 pub mod runner;

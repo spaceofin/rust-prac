@@ -40,6 +40,34 @@ fn combine_vecs(
     v.into_iter().chain(u.into_iter()).cycle()
 }
 
+fn make_adder_function_boxed(y: i32) -> Box<dyn Fn(i32) -> i32> {
+    let closure = move |x: i32| x + y;
+    Box::new(closure)
+}
+
+fn make_adder_function(y: i32) -> impl Fn(i32) -> i32 {
+    let closure = move |x: i32| x + y;
+    closure
+}
+
+fn double_positives<'a>(numbers: &'a Vec<i32>) -> impl Iterator<Item = i32> + 'a {
+    numbers
+        .iter()
+        .filter(|x| x > &&0)
+        .map(|x| x * 2)
+}
+
+fn double_positives_boxed<'a>(
+    numbers: &'a Vec<i32>
+) -> Box<dyn Iterator<Item = i32> + 'a> {
+    Box::new(
+        numbers
+            .iter()
+            .filter(|x| x > &&0)
+            .map(|x| x * 2)
+    )
+}
+
 fn as_return_type() {
     let mut iter = zero_to_n(5);
 
@@ -54,7 +82,22 @@ fn as_return_type() {
     for x in v3.take(20) {
         print!("{} ", x);
     }
+    println!();
 
+    let plus_one = make_adder_function(1);
+    let result = plus_one(2);
+    println!("result: {}", result);
+
+    let plus_one_boxed = make_adder_function_boxed(1);
+    let result_boxed = plus_one_boxed(2);
+    println!("result_boxed: {}", result_boxed);
+
+    let singles = vec![-3, -2, 2, 3];
+    let doubles = double_positives(&singles);
+    println!("doubles: {:?}", doubles.collect::<Vec<i32>>());
+    
+    let doubles_boxed = double_positives_boxed(&singles);
+    println!("doubles_boxed: {:?}", doubles_boxed.collect::<Vec<i32>>());
 }
 
 pub fn traits_demo() {

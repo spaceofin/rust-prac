@@ -5,4 +5,5 @@ pub mod drop;
 pub mod derive;
 pub mod iterators;
 pub mod traits;
+pub mod clone_and_overlapping;
 pub mod runner;

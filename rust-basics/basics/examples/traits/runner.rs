@@ -1,3 +1,5 @@
+use std::clone;
+
 use super::animal;
 use super::anonymous_animal;
 use super::binary_operators;
@@ -5,6 +7,7 @@ use super::drop;
 use super::derive;
 use super::iterators;
 use super::traits;
+use super::clone_and_overlapping;
 
 pub fn run() {
     // animal::animal_demo();
@@ -13,5 +16,6 @@ pub fn run() {
     // drop::drop_examples();
     // derive::derive_demo();
     // iterators::iterators_demo();
-    traits::traits_demo();
+    // traits::traits_demo();
+    clone_and_overlapping::clone_and_overlapping_demo();
 }

@@ -8,6 +8,7 @@ use super::derive;
 use super::iterators;
 use super::traits;
 use super::clone_and_overlapping;
+use super::supertraits;
 
 pub fn run() {
     // animal::animal_demo();
@@ -17,5 +18,6 @@ pub fn run() {
     // derive::derive_demo();
     // iterators::iterators_demo();
     // traits::traits_demo();
-    clone_and_overlapping::clone_and_overlapping_demo();
+    // clone_and_overlapping::clone_and_overlapping_demo();
+    supertraits::supertraits_demo();
 }

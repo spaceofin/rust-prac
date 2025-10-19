@@ -27,8 +27,8 @@ fn main() {
     // std_library_types::runner::run();
     // modules::runner::run();
     // ownership::runner::run();
-    traits::runner::run();
-    // macro_rules::runner::run();
+    // traits::runner::run();
+    macro_rules::runner::run();
     // generics::runner::run();
     // async_and_future::runner::run();
     // concurrency::runner::run();

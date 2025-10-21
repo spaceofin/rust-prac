@@ -28,11 +28,11 @@ fn main() {
     // modules::runner::run();
     // ownership::runner::run();
     // traits::runner::run();
-    macro_rules::runner::run();
+    // macro_rules::runner::run();
     // generics::runner::run();
     // async_and_future::runner::run();
     // concurrency::runner::run();
-    // error_handling::runner::run();
+    error_handling::runner::run();
     // smart_pointers::runner::run();
     // primitives::runner::run();
     // constants::constants_demo();

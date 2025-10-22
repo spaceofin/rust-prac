@@ -1,6 +1,6 @@
 use std::num::ParseIntError;
 use std::fmt;
-use std::error;
+use std::error::{self, Error};
 
 fn double_first_with_two_errors(vec: &Vec<&str>) -> i32 {
     let first = vec.first().unwrap(); // Generator error 1
@@ -72,6 +72,12 @@ fn double_first_box(vec: &Vec<&str>) -> BoxResult<i32> {
         })
 }
 
+fn double_first_qmark(vec: &Vec<&str>) -> BoxResult<i32> {
+    let first = vec.first().ok_or(EmptyVec)?;
+    let parsed = first.parse::<i32>()?;
+    Ok(2 * parsed)
+}
+
 fn print_box_result(result: BoxResult<i32>) {
     match result {
         Ok(n) => println!("The first doubled is {}", n),
@@ -79,6 +85,60 @@ fn print_box_result(result: BoxResult<i32>) {
     }
 }
 
+type DoubleKindResult<T> = std::result::Result<T, DoubleErrorKind>;
+
+#[derive(Debug)]
+enum DoubleErrorKind {
+    EmptyVec,
+    Parse(ParseIntError),
+}
+
+impl fmt::Display for DoubleErrorKind {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            DoubleErrorKind::EmptyVec =>
+                write!(f, "please use a vector with at least one element"),
+            DoubleErrorKind::Parse(..) =>
+                write!(f, "the provided string could not be parsed as int"),
+        }
+    }
+}
+
+impl error::Error for DoubleErrorKind {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        match *self {
+            DoubleErrorKind::EmptyVec => None,
+            // The underlying ParseIntError is returned as a &dyn Error automatically.
+            DoubleErrorKind::Parse(ref e) => Some(e),
+        }
+    }
+}
+
+// Converts ParseIntError into DoubleError; used automatically by `?`.
+impl From<ParseIntError> for DoubleErrorKind {
+    fn from(err: ParseIntError) -> DoubleErrorKind {
+        DoubleErrorKind::Parse(err)
+    }
+}
+
+fn double_first_kind(vec: &Vec<&str>) -> DoubleKindResult<i32> {
+    let first = vec.first().ok_or(DoubleErrorKind::EmptyVec)?;
+    // Here we implicitly use the `ParseIntError` implementation of `From` in order to create a `DoubleError`.
+    let parsed = first.parse::<i32>()?;
+    Ok(2 * parsed)
+}
+
+fn print_double_kind_result(result: DoubleKindResult<i32>) {
+    match result {
+        Ok(n)  => println!("The first doubled is {}", n),
+        Err(e) => {
+            println!("Error: {}", e);
+            if let Some(source) = e.source() {
+                println!("  Caused by: {}", source);
+            }
+        },
+    }
+}
 
 fn multiple_error_types_examples() {
     let numbers = vec!["42", "93", "18"];
@@ -113,6 +173,16 @@ fn multiple_error_types_examples() {
     print_box_result(double_first_box(&numbers));
     print_box_result(double_first_box(&empty));
     print_box_result(double_first_box(&strings));
+
+    println!("----------double_first_qmark----------");
+    print_box_result(double_first_qmark(&numbers));
+    print_box_result(double_first_qmark(&empty));
+    print_box_result(double_first_qmark(&strings));
+
+    println!("----------double_first_kind----------");
+    print_double_kind_result(double_first_kind(&numbers));
+    print_double_kind_result(double_first_kind(&empty));
+    print_double_kind_result(double_first_kind(&strings));
 }
 
 pub fn multiple_error_types_demo() {

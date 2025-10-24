@@ -4,4 +4,5 @@ pub mod option;
 pub mod combinators;
 pub mod result;
 pub mod multiple_error_types;
+pub mod iterating_results;
 pub mod runner;

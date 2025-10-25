@@ -32,7 +32,7 @@ fn main() {
     // generics::runner::run();
     // async_and_future::runner::run();
     // concurrency::runner::run();
-    error_handling::runner::run();
+    // error_handling::runner::run();
     // smart_pointers::runner::run();
     // primitives::runner::run();
     // constants::constants_demo();
@@ -40,7 +40,7 @@ fn main() {
     // conversion_and_expressions::runner::run();
     // flow_of_control::runner::run();
     // crates_and_cargo::runner::run();
-    // std_misc::runner::run();
+    std_misc::runner::run();
     // scoping_rules::runner::run();
     // functions::runner::run();
 }

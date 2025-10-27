@@ -4,6 +4,7 @@ use super::path_examples;
 use super::file_io;
 use super::child_processes;
 use super::filesystem_operations;
+use super::program_arguments;
 
 pub fn run() {
     // threads::threads_demo();
@@ -11,5 +12,6 @@ pub fn run() {
     // path_examples::path_examples();
     // file_io::file_io_demo();
     // child_processes::child_processes_demo();
-    filesystem_operations::filesystem_operations_demo();
+    // filesystem_operations::filesystem_operations_demo();
+    program_arguments::program_arguments_demo();
 }

@@ -10,3 +10,7 @@ dirs-next = "2.0.0"
 trpl = "0.2.0"
 library_demo = { path = "examples/library_demo" }
 itertools = "0.14.0"
+
+[dev-dependencies]
+pretty_assertions = "1"
+predicates = "3"

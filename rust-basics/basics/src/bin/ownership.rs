@@ -1,6 +1,7 @@
 #![allow(unused_variables)]
 #![allow(dead_code)]
 #![allow(unused_assignments)]
+#![allow(unused_mut)]
 
 fn string_lifetime() {
     {
@@ -86,6 +87,68 @@ fn ownership_examples() {
     println!("The length of '{s5}' is {len}.");
 }
 
+fn calculate_length_ref(s: &String) -> usize {
+    s.len()
+}
+
+fn change(some_string: &mut String) {
+    some_string.push_str(", world");
+}
+
+// fn dangle() -> &String {
+//     let s = String::from("dangle");
+//     &s
+// }
+
+fn no_dangle() -> String {
+    let s = String::from("no_dangle");
+    s
+}
+
+fn references_and_borrowing() {
+    let s1 = String::from("hello");
+    let len = calculate_length_ref(&s1);
+    println!("The length of '{s1}' is {len}.");
+
+    let mut s = String::from("hello");
+    change(&mut s);
+    println!("s: {}",s);
+
+    let r1 = &mut s;
+    // let r2 = &mut s;
+    // Compile Error: cannot borrow `s` as mutable more than once at a time
+    // println!("{r2}");
+    println!("r1: {r1}");
+
+    let mut s2 = String::from("hi");
+    {
+        let r3 = &mut s2;
+    }
+    let r4 = &mut s2;
+    println!("r4: {r4}");
+
+    let mut s3 = String::from("world");
+    let r5 = &s3;
+    let r6 = &s3;
+    // let r7 = &mut s3;
+    // Compile Error: No mutable ref if immutable refs exist.
+    // println!("r7: {r7}");
+    println!("r5: {r5}, r6: {r6}");
+
+    let mut s4 = String::from("wow");
+    let r8 = &s4;
+    let r9 = &s4;
+    println!("r8: {r8}, r9: {r9}");
+    // Variables r8 and r9 will not be used after this point.
+
+    let r10 = &mut s4; // no problem
+    println!("r10: {r10}");
+
+    let no_dangle_s = no_dangle();
+    println!("no_dangle_s: {no_dangle_s}");
+}
+
+
 fn main() {
     println!("\n----------Owned String----------");
     owned_string();
@@ -93,4 +156,6 @@ fn main() {
     move_and_clone();
     println!("\n----------Ownership Examples----------");
     ownership_examples();
+    println!("\n----------References and Borrwoing----------");
+    references_and_borrowing();
 }

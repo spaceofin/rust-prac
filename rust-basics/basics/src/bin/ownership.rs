@@ -148,6 +148,90 @@ fn references_and_borrowing() {
     println!("no_dangle_s: {no_dangle_s}");
 }
 
+// Takes &str as input; &String is also accepted because it automatically dereferences to &str.
+fn first_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    &s[..]
+}
+
+// Takes &str as input; &String is also accepted because it automatically dereferences to &str.
+fn second_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
+    let mut first_space_index: Option<usize> = None; 
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            if first_space_index.is_none() {
+                first_space_index = Some(i);
+            } else {
+                return &s[first_space_index.unwrap() + 1..i];
+            }
+        }
+    }
+     // If there's only one space, return the rest as the second word
+    if let Some(x) = first_space_index {
+        return &s[x+1..];
+    }
+    // If there's no space, there is no second word
+    ""
+}
+
+
+fn slice_type() {
+    let s = String::from("hello world");
+    let hello = &s[0..5];
+    let world = &s[6..11];
+    println!("{hello}, {world}");
+
+    let slice1 = &s[0..2];
+    let slice2 = &s[..2];
+    println!("{slice1}, {slice2}");
+
+    let len = s.len();
+    let slice3 = &s[3..len];
+    let slice4 = &s[3..];
+    println!("{slice3}, {slice4}");
+
+    let slice5 = &s[0..len];
+    let slice6 = &s[..];
+    println!("{slice5}, {slice6}");
+
+    let hangul = String::from("안녕하세요");
+    let first = &hangul[0..3];
+    let second = &hangul[3..6];
+    println!("{first} {second}");
+    
+    // Compile Error: string slices must start and end on valid UTF-8 character boundaries
+    // let middle = &hangul[2..5];
+
+    let alphabets = String::from("abc def ghi");
+    let mut word_1 = first_word(&alphabets); 
+    let mut word_2 = second_word(&alphabets); 
+    println!("first word: {word_1}, second word: {word_2}");
+    word_1 = first_word(&alphabets[0..5]);
+    word_2 = second_word(&alphabets[0..5]);
+    println!("first word: {word_1}, second word: {word_2}");
+
+    let alphabet_literal = "jkl mno pqr";
+    let mut word_3 = first_word(alphabet_literal); 
+    let mut word_4 = second_word(alphabet_literal); 
+    println!("first word: {word_3}, second word: {word_4}");
+    word_3 = first_word(&alphabet_literal[0..5]);
+    word_4 = second_word(&alphabet_literal[0..5]);
+    println!("first word: {word_3}, second word: {word_4}");
+
+    let word_5 = first_word(&alphabet_literal);
+    println!("first word: {word_5}");
+
+    let a = [1, 2, 3, 4, 5];
+    let slice = &a[1..3];
+    println!("slice: {:?}", slice);
+}
+
 
 fn main() {
     println!("\n----------Owned String----------");
@@ -158,4 +242,6 @@ fn main() {
     ownership_examples();
     println!("\n----------References and Borrwoing----------");
     references_and_borrowing();
+    println!("\n----------First Word----------");
+    slice_type();
 }

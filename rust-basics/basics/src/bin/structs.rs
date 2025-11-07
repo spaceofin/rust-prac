@@ -84,6 +84,97 @@ fn structs_basic() {
     println!("book: {:?}",book);
 }
 
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn area(rectangle: &Rectangle) -> u32 {
+    rectangle.width * rectangle.height
+}
+
+impl Rectangle {
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.width > other.width && self.height > other.height
+    }
+}
+
+#[derive(Debug)]
+struct Square {
+    side: u32,
+}
+
+// Each struct is allowed to have multiple `impl` blocks.
+impl Square {
+    // method
+    fn area(&self) -> u32 {
+        self.side * self.side
+    }
+    // associated function
+    fn info() -> () {
+        println!("This is a Square struct.");
+    }
+}
+
+impl Square {
+    fn perimeter(&self) -> u32 {
+        4 * self.side
+    }
+}
+
+fn structs_examples() {
+    let rect1 = Rectangle {
+        width: 30,
+        height: 50,
+    };
+
+    println!("rect1: {rect1:#?}");
+    println!(
+        "The area of the rectangle is {} square pixels.",
+        area(&rect1)
+    );
+
+    let scale = 2;
+    let rect2 = Rectangle {
+        width: dbg!(40 * scale),
+        height: 60,
+    };
+
+    // dbg!(&rect2);
+    dbg!(rect2);
+    // Compile Error: `dbg!` takes ownership of `rect2`,
+    // println!("rect2: {rect2:#?}");
+
+    let sq1 = Square { side: 30 };
+    println!("sq: {sq1:#?}");
+    println!(
+        "The area of the square is {} square pixels, and its perimeter is {} pixels.",
+        sq1.area(), sq1.perimeter()
+    );
+
+    let rect3 = Rectangle {
+        width: 10,
+        height: 20,
+    };
+    let rect4 = Rectangle {
+        width: 20,
+        height: 30,
+    };
+    let rect5 = Rectangle {
+        width: 30,
+        height: 30,
+    };
+    println!("Can rect5 hold rect3? {}", rect5.can_hold(&rect3));
+    println!("Can rect5 hold rect4? {}", rect5.can_hold(&rect4));
+
+    Square::info();
+
+}
+
 fn main() {
+    println!("\n----------Structs Basic----------");
     structs_basic();
+    println!("\n----------Structs Examples----------");
+    structs_examples();
 }

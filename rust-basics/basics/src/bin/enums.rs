@@ -34,24 +34,65 @@ enum Message {
     ChangeColor(i32, i32, i32),
 }
 
-    impl Message {
-        fn call(&self) {
-            match self {
-                Message::Quit => {
-                    println!("Quit the program");
-                }
-                Message::Move { x, y } => {
-                    println!("Move to coordinates: ({}, {})", x, y);
-                }
-                Message::Write(text) => {
-                    println!("Write message: {}", text);
-                }
-                Message::ChangeColor(r, g, b) => {
-                    println!("Change color to RGB({}, {}, {})", r, g, b);
-                }
+impl Message {
+    fn call(&self) {
+        match self {
+            Message::Quit => {
+                println!("Quit the program");
+            }
+            Message::Move { x, y } => {
+                println!("Move to coordinates: ({}, {})", x, y);
+            }
+            Message::Write(text) => {
+                println!("Write message: {}", text);
+            }
+            Message::ChangeColor(r, g, b) => {
+                println!("Change color to RGB({}, {}, {})", r, g, b);
             }
         }
     }
+}
+
+#[derive(Debug)]
+enum UsState {
+    Alabama,
+    Alaska,
+}
+
+#[derive(Debug)]
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState),
+}
+
+fn value_in_cents(coin: &Coin) -> u8 {
+    match coin {
+        Coin::Penny => {
+            println!("Lucky penny!");
+            1
+        },
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter(state) => {
+            println!("State quarter from {state:?}!");
+            25
+        },
+    }
+}
+
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    match x {
+        None => None,
+        Some(i) => Some(i + 1),
+    }
+}
+
+fn add_fancy_hat() { println!("add fancy hat!"); }
+fn remove_fancy_hat() { println!("remove fancy hat!"); }
+fn move_player(num_spaces: u8) { println!("move player {num_spaces}"); }
+fn reroll() { println!("reroll!"); }
 
 fn enum_basics() {
     let four = MyIpAddrKind::V4;
@@ -92,6 +133,51 @@ fn enum_basics() {
     c.call();
 }
 
+fn match_examples() {
+    let coin1 = Coin::Dime;
+    let coin2 = Coin::Nickel;
+    let coin3 = Coin::Penny;
+    let coin4 = Coin::Quarter(UsState::Alaska);
+
+    println!("value in {coin1:?}: {:?}\n", value_in_cents(&coin1));
+    println!("value in {coin2:?}: {:?}\n", value_in_cents(&coin2));
+    println!("value in {coin3:?}: {:?}\n", value_in_cents(&coin3));
+    println!("value in {coin4:?}: {:?}\n", value_in_cents(&coin4));
+
+    let five = Some(5);
+    let six = plus_one(five);
+    let none = plus_one(None);
+    println!("five: {five:?}, six: {six:?}, none: {none:?}");
+
+    println!("five: {}, six: {}, none: {}", 
+        five.map_or("None".to_string(), |v| v.to_string()),
+        six.map_or("None".to_string(), |v| v.to_string()),
+      
+        none.map_or("None".to_string(), |v| v.to_string()),
+    );
+    println!();
+
+    println!("__dice_roll1__");
+    let dice_roll1 = 9;
+    match dice_roll1 {
+        3 => add_fancy_hat(),
+        7 => remove_fancy_hat(),
+        // other matches any remaining value and binds it to the variable `other`
+        other => move_player(other),
+    }
+
+    println!("__dice_roll2__");
+    let dice_roll2 = 9;
+    match dice_roll2 {
+        3 => add_fancy_hat(),
+        7 => remove_fancy_hat(),
+        // `_` matches any remaining value but does not bind it to a variable
+        _ => reroll(),
+        // empty tuple `()` does nothing
+        // _ => (),       
+    }}
+
 fn main() {
-    enum_basics();
+    // enum_basics();
+    match_examples();
 }

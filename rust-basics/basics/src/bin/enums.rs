@@ -1,5 +1,6 @@
 #![allow(unused_variables)]
 #![allow(dead_code)]
+#![allow(unused_assignments)]
 
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
@@ -59,6 +60,15 @@ enum UsState {
     Alaska,
 }
 
+impl UsState {
+    fn existed_in(&self, year: u16) -> bool {
+        match self {
+            UsState::Alabama => year >= 1819,
+            UsState::Alaska => year >= 1959,
+        }
+    }
+}
+
 #[derive(Debug)]
 enum Coin {
     Penny,
@@ -93,6 +103,25 @@ fn add_fancy_hat() { println!("add fancy hat!"); }
 fn remove_fancy_hat() { println!("remove fancy hat!"); }
 fn move_player(num_spaces: u8) { println!("move player {num_spaces}"); }
 fn reroll() { println!("reroll!"); }
+
+fn describe_state_quarter(coin: Coin) -> Option<String> {
+    // let state = if let Coin::Quarter(state) = coin {
+    //     state
+    // } else {
+    //     return None;
+    // };
+
+    let Coin::Quarter(state) = coin else {
+        return None;
+    };
+    println!("state: {state:?}");
+
+    if state.existed_in(1900) {
+        Some(format!("{state:?} is pretty old, for America!"))
+    } else {
+        Some(format!("{state:?} is relatively new."))
+    }
+}
 
 fn enum_basics() {
     let four = MyIpAddrKind::V4;
@@ -175,9 +204,47 @@ fn match_examples() {
         _ => reroll(),
         // empty tuple `()` does nothing
         // _ => (),       
-    }}
+    }
+}
+
+fn let_examples () {
+    let config_max = Some(3u8);
+    match config_max {
+        Some(max) => println!("The maximum is configured to be {max}"),
+        _ => (),
+    }
+
+    let config_max = Some(3u8);
+    if let Some(max) = config_max {
+        println!("The maximum is configured to be {max}");
+    }
+
+    let mut count = 0;
+    let coin = Coin::Quarter(UsState::Alaska);
+    // let coin = Coin::Dime;
+    match coin {
+        Coin::Quarter(state) => println!("State quarter from {state:?}!"),
+        _ => count += 1,
+    }
+    println!("count: {count}");
+
+    let mut count = 0;
+    let coin = Coin::Quarter(UsState::Alaska);
+    // let coin = Coin::Dime;
+    if let Coin::Quarter(state) = coin {
+        println!("State quarter from {state:?}!");
+    } else {
+        count += 1;
+    }
+    println!("count: {count}");
+
+    let coin = Coin::Quarter(UsState::Alabama);
+    // let coin = Coin::Dime;
+    describe_state_quarter(coin);
+}
 
 fn main() {
     // enum_basics();
-    match_examples();
+    // match_examples();
+    let_examples();
 }

@@ -64,6 +64,80 @@ fn vector_examples() {
     // println!("v: {v:?}");
 }
 
+fn string_examples() {
+    let s1 = String::new();
+    let data = "initial contents";
+    let s2 = data.to_string();
+    // The method also works on a literal directly
+    let s3 = "initial contents".to_string();
+    println!("s1: {s1:?}");
+    println!("s2: {s2:?}");
+    println!("s3: {s3:?}");
+
+    // Strings are UTF-8 encoded.
+    let greetings: [String; 11] = [
+        String::from("السلام عليكم"),
+        String::from("Dobrý den"),
+        String::from("Hello"),
+        String::from("שלום"),
+        String::from("नमस्ते"),
+        String::from("こんにちは"),
+        String::from("안녕하세요"),
+        String::from("你好"),
+        String::from("Olá"),
+        String::from("Здравствуйте"),
+        String::from("Hola"),
+    ];
+    greetings.iter().for_each(|hello| println!("{hello:?}"));
+
+    let mut s4 = String::from("foo");
+    s4.push_str("bar");
+    let mut s5 = String::from("foo");
+    let s6 = "bar";
+    // `push_str` take string slice(`&str`) and does not take ownership.
+    s5.push_str(s6);
+    println!("s4: {s4:?}");
+    println!("s5: {s5:?}");
+    println!("s6: {s6:?}");
+
+    let mut s7 = String::from("lo");
+    // `push` method takse a single character.
+    s7.push('l');
+    println!("s7: {s7:?}");
+
+    let s8 = String::from("Hello, ");
+    let s9 = String::from("world!");
+    let s10 = s8 + &s9;
+    // println!("s8: {s8:?}"); // Compile Error: value borrowed after move.
+    println!("s9: {s9:?}");
+    println!("s10: {s10:?}");
+
+    let s11 = String::from("tic");
+    let s12 = String::from("tac");
+    let s13 = String::from("toe");
+    let s14 = s11 + "-" + &s12 + "-" + &s13;
+    let s11 = String::from("tic");
+    let s15 = format!("{s11}-{s12}-{s13}");
+    println!("s14: {s14:?}");
+    println!("s15: {s15:?}");
+
+    // Compile Error: String don't support indexing.
+    // let h = s14[0];
+
+    let hello1 = String::from("hello");
+    let hello2 = String::from("안녕하세요");
+    println!("hello1: {}{}", &hello1[0..1], &hello1[1..2]);
+    println!("hello2: {}{}", &hello2[0..3], &hello2[3..6]); 
+    // Compile Error
+    // println!("hello1: {}", &hello1[0]);
+    // println!("hello2: {}", &hello2[0..2]);
+
+    for c in "가나다".chars() { print!("{c} "); }
+    println!();
+    for b in "가나다".bytes() { print!("{b} "); }
+}
+
 fn main() {
-    vector_examples();
+    // vector_examples();
+    string_examples();
 }

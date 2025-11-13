@@ -2,6 +2,8 @@
 #![allow(dead_code)]
 #![allow(unused_assignments)]
 
+use std::collections::HashMap;
+
 #[derive(Debug)]
 enum SpreadsheetCell {
     Int(i32),
@@ -137,7 +139,52 @@ fn string_examples() {
     for b in "가나다".bytes() { print!("{b} "); }
 }
 
+fn hashmap_examples() {
+    let mut scores = HashMap::new();
+
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Yellow"), 50);
+
+    println!("scores: {scores:?}");
+
+    let team_blue = String::from("Blue");
+    // let score = scores.get(&team_name).unwrap_or(&0);
+    let score = scores.get(&team_blue).copied().unwrap_or(0);
+    println!("score for team Blue: {score:?}");
+
+    for (key, value) in &scores {
+        println!("{key}: {value}");
+    }
+
+    let field_name = String::from("Favorite color");
+    let field_value = String::from("Blue");
+
+    let mut map = HashMap::new();
+    map.insert(field_name, field_value);
+    // Compile Error: value borrowed after move.
+    // println!("field_name: {field_name}, field_value: {field_value}")
+
+    scores.insert(String::from("Blue"), 25);
+    println!("score for team Blue: {:?}", &scores.get(&team_blue).copied().unwrap_or(0));
+
+    scores.entry(String::from("Orange")).or_insert(30);
+    scores.entry(String::from("Blue")).or_insert(30);
+    println!("scores: {scores:?}");
+
+    
+    let text = "hello world wonderful world";
+    let mut word_map = HashMap::new();
+    for word in text.split_whitespace() {
+        // Get a mutable reference to the value for this word.
+        let count_value = word_map.entry(word).or_insert(0);
+        *count_value += 1;
+    }
+
+    println!("{word_map:?}");
+}
+
 fn main() {
     // vector_examples();
-    string_examples();
+    // string_examples();
+    hashmap_examples();
 }

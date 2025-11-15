@@ -1,4 +1,9 @@
 
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
+use std::fmt::{Display, Debug};
+
 pub trait Summary {
     fn summarize_author(&self) -> String; 
 
@@ -78,6 +83,54 @@ impl Summary for SocialPost {
     }
 }
 
+pub trait Describe {
+    fn describe(&self) -> String;
+}
+
+pub fn print_description(item: &impl Describe) {
+    println!("{}", item.describe());
+}
+
+fn print_and_display_description<T: Describe + Debug>(item: &T) {
+    println!("item: {:?}", item);
+    println!("{}", item.describe());
+}
+
+// `impl Trait` syntax is syntax sugar for a trait bound.
+// pub fn print_description<T: Describe>(item: &T) {
+//     println!("{}", item.describe());
+// }
+
+#[derive(Debug)]
+struct Book {
+    title: String,
+    author: String,
+}
+
+struct Movie {
+    title: String,
+    director: String,
+}
+
+impl Describe for Book {
+    fn describe(&self) -> String {
+        format!("Book '{}' by {}", self.title, self.author)
+    }
+}
+
+fn some_function1<T: Display + Clone, U: Clone + Debug>(t: &T, u: &U) -> () { 
+    println!("some_function1 called: t is {t}, u is {u:?}");
+}
+
+// with `where1` clauses
+fn some_function2<T, U>(t: &T, u: &U) -> ()
+where
+    T: Display + Clone,
+    U: Clone + Debug,
+{
+    println!("some_function1 called: t is {t}, u is {u:?}");
+}
+
 fn trait_basic_examples() {
     let article = NewsArticle {
         headline: String::from("Penguins win the Stanley Cup Championship!"),
@@ -122,6 +175,22 @@ fn trait_basic_examples() {
     println!("post: {alice_post:#?}");
 }
 
+fn trait_examples() {
+    let book = Book {title: "New World".into(), author:"Alice".into()};
+    print_description(&book);
+    print_and_display_description(&book);
+
+    let movie = Movie {title: "New Music".into(), director:"Bob".into()};
+    // Compile Error: the trait `Describe` is not implemented for `Movie`
+    // print_description(&movie);
+
+    let number1= 10;
+    let number2 = 20;
+    some_function1(&number1, &number2);
+    some_function2(&number1, &number2);
+}
+
 fn main() {
-    trait_basic_examples();
+    // trait_basic_examples();
+    trait_examples();
 }

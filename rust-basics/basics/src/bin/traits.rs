@@ -131,6 +131,47 @@ where
     println!("some_function1 called: t is {t}, u is {u:?}");
 }
 
+// Returns a type that implements the Describe trait
+fn returns_descrizable() -> impl Describe {
+    Book {
+        title: String::from("New Picture"),
+        author: String::from("Charlie")
+    }
+}
+
+#[derive(Debug)]
+struct Pair<T> {
+    x: T,
+    y: T,
+}
+
+impl<T> Pair<T> {
+    fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+}
+
+impl<T: Display + PartialOrd> Pair<T> {
+    fn cmp_display(&self) {
+        if self.x >= self.y {
+            println!("The largest member is x = {}", self.x);
+        } else {
+            println!("The largest member is y = {}", self.y);
+        }
+    }
+}
+
+trait Print {
+    fn print(&self) -> ();
+}
+
+// blanket implementation
+impl<T: Debug> Print for T {
+    fn print(&self) -> () {
+        println!("print: {self:?}");
+    }
+}
+
 fn trait_basic_examples() {
     let article = NewsArticle {
         headline: String::from("Penguins win the Stanley Cup Championship!"),
@@ -188,6 +229,19 @@ fn trait_examples() {
     let number2 = 20;
     some_function1(&number1, &number2);
     some_function2(&number1, &number2);
+
+    let pair1 = Pair {x: 2, y: 3};
+    println!("pair1: {pair1:?}");
+    let pair2 = Pair::new(10, 20);
+    println!("pair2: {pair2:?}");
+
+    pair1.cmp_display();
+    pair2.cmp_display();
+
+    let a = 32;
+    a.print();
+    let b = "Hellooooo".to_string();
+    b.print();
 }
 
 fn main() {

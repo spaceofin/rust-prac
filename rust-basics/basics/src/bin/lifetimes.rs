@@ -63,7 +63,51 @@ fn struct_lifetimes() {
     // println!("[outer scope]i: {i:#?}");
 }
 
+// If there is exactly one input reference, the output reference is assigned the same lifetime as that input.
+fn first_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    &s[..]
+}
+
+struct User {
+    name: String,
+    email: String,
+}
+
+impl User {
+    // If there is exactly one input reference, the output reference is assigned the same lifetime as that input.
+    fn get_name(&self) -> &str {
+        &self.name
+    }
+
+    // If there are multiple input references and one is &self or &mut self, the output references get the lifetime of self.
+    fn get_field(&self, field: &str) -> &str {
+        match field {
+            "username" => &self.name,
+            "email" => &self.email,
+            _ => "unknown",
+        }
+    }
+}
+
+fn lifetime_elision() {
+    let a = String::from("hello world");
+    let first = first_word(&a);
+    println!("first: {first}");
+
+    let user1 = User { name: "Alice".into(), email: "alice-email@example.com".into()};
+    println!("user1.name: {}",user1.get_name());
+    println!("user1.email: {}",user1.get_field("email"));
+}
+
 fn main() {
-    generic_lifetimes();
-    struct_lifetimes();
+    // generic_lifetimes();
+    // struct_lifetimes();
+    lifetime_elision();
 }

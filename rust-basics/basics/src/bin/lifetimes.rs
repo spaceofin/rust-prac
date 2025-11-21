@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
+use std::fmt::Display;
 
 // fn dangling_reference_example() {
 //     let r;
@@ -20,6 +21,16 @@ struct ImportantExcerpt<'a> {
     part: &'a str,
     title: &'a str,
     pages: Vec<usize>
+}
+
+impl<'a> ImportantExcerpt<'a> {
+    fn level(&self) -> i32 {
+        3
+    }
+    fn announce_and_return_part(&self, announcement: &str) -> &str {
+        println!("Attention please: {announcement}");
+        self.part
+    }
 }
 
 fn generic_lifetimes() {
@@ -106,8 +117,36 @@ fn lifetime_elision() {
     println!("user1.email: {}",user1.get_field("email"));
 }
 
+fn longest_with_an_announcement<'a, T>(
+    x: &'a str,
+    y: &'a str,
+    ann: T,
+) -> &'a str
+where
+    T: Display,
+{
+    println!("Announcement! {ann}");
+    if x.len() > y.len() { x } else { y }
+}
+
+fn lifetimes_demo() {
+    let excerpt = ImportantExcerpt {
+        part: "Call me Ishmael. Some years ago...",
+        title: "Moby Dick",
+        pages: vec![4,5]
+    };
+
+    println!("level: {}", excerpt.level());
+    let ann = "Here is the part you'll need";
+    println!("{}", excerpt.announce_and_return_part(ann));
+
+    let longest = longest_with_an_announcement("ab", "cde", "The longer of the two strings is...");
+    println!("{longest}");
+}
+
 fn main() {
     // generic_lifetimes();
     // struct_lifetimes();
-    lifetime_elision();
+    // lifetime_elision();
+    lifetimes_demo();
 }

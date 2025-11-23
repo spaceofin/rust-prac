@@ -35,6 +35,13 @@ impl Inventory {
     }
 }
 
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+
 fn closures_demo() {
     let store = Inventory {
         shirts: vec![ShirtColor::Blue, ShirtColor::Red, ShirtColor::Blue],
@@ -79,7 +86,71 @@ fn closures_types() {
     println!("s: {s}");
 }
 
+fn closures_capturing_or_moving() {
+    let im_list = vec![1, 2, 3];
+    println!("[im_list] Before defining closure: {im_list:?}");
+
+    // borrowing immutably
+    let only_borrows = || println!("[im_list] From closure: {im_list:?}");
+
+    println!("[im_list] Before calling closure: {im_list:?}");
+    only_borrows();
+    println!("[im_list] After calling closure: {im_list:?}");
+
+    let mut mu_list = vec![4, 5, 6];
+    println!("[mu_list] Before defining closure: {mu_list:?}");
+
+    // borrowing mutably
+    let mut borrows_mutably = || mu_list.push(7);
+
+    // Compile Error: immutable borrow occurs.
+    // println!("[mu_list] Before calling closure: {mu_list:?}");
+    borrows_mutably();
+    println!("[mu_list] After calling closure: {mu_list:?}");
+
+    let list = vec![7, 8, 9];
+    println!("Before defining closure: {list:?}");
+    // Spawning a thread requires move.
+    thread::spawn(move || println!("From thread: {list:?}"))
+        .join()
+        .unwrap();
+}
+
+fn closures_traits() {
+    let mut list = [
+        Rectangle { width: 10, height: 1 },
+        Rectangle { width: 3, height: 5 },
+        Rectangle { width: 7, height: 12 },
+    ];
+
+    // Using an Fn closure with sort_by_key
+    list.sort_by_key(|r| r.width);
+    println!("sorted list:\n{list:#?}");
+
+    // Using an FnMut closure with sort_by_key
+    let mut num_sort_operations = 0;
+    list.sort_by_key(|r| {
+        num_sort_operations += 1;
+        println!("key call count: {}, current element: {}", num_sort_operations, r.width);
+        r.width
+    });
+
+    println!("sorted list:\n{list:#?}");
+
+    // Compile Error: attempting to use an FnOnce closure with sort_by_key
+    // let mut sort_operations = vec![];
+    // let value = String::from("closure called");
+
+    // list.sort_by_key(|r| {
+    //     sort_operations.push(value);
+    //     r.width
+    // });
+    // println!("{list:#?}");
+}
+
 fn main() {
     // closures_demo();
-    closures_types();
+    // closures_types();
+    // closures_capturing_or_moving();
+    closures_traits();
 }

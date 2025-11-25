@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use std::{thread, time::Duration};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -148,7 +146,7 @@ fn closures_traits() {
     // println!("{list:#?}");
 }
 
-fn main() {
+pub fn run() {
     // closures_demo();
     // closures_types();
     // closures_capturing_or_moving();

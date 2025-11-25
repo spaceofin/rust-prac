@@ -1,7 +1,3 @@
-#![allow(unused_variables)]
-#![allow(dead_code)]
-#![allow(unused_assignments)]
-
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 #[derive(Debug)]
@@ -243,7 +239,7 @@ fn let_examples () {
     describe_state_quarter(coin);
 }
 
-fn main() {
+pub fn run() {
     // enum_basics();
     // match_examples();
     let_examples();

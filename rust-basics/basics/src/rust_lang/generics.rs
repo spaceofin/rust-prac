@@ -1,7 +1,3 @@
-#![allow(unused_variables)]
-#![allow(dead_code)]
-#![allow(unused_assignments)]
-
 fn largest<T: PartialOrd>(list: &[T]) -> &T {
     let mut largest = &list[0];
 
@@ -93,6 +89,6 @@ fn generics_basic() {
     println!("score: {:?}, no_score: {:?}", score.unwrap(), no_score);
 }
 
-fn main() {
+pub fn run() {
     generics_basic();
 }

@@ -1,6 +1,3 @@
-#![allow(unused_variables)]
-#![allow(dead_code)]
-#![allow(unused_assignments)]
 #![allow(unused_mut)]
 
 fn string_lifetime() {
@@ -233,7 +230,7 @@ fn slice_type() {
 }
 
 
-fn main() {
+pub fn run() {
     println!("\n----------Owned String----------");
     owned_string();
     println!("\n----------Move and Clone----------");

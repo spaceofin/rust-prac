@@ -50,6 +50,6 @@ fn iterators_demo() {
     println!("V4: {v4:?}");
 }
 
-fn main() {
+pub fn run() {
     iterators_demo();
 }

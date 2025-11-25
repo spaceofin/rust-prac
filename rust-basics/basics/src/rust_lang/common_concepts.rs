@@ -1,7 +1,3 @@
-#![allow(unused_variables)]
-#![allow(unused_mut)]
-#![allow(dead_code)]
-
 use std::io;
 
 fn variables_mutability () {
@@ -250,7 +246,7 @@ fn control_flow() {
     println!("LIFTOFF!!!");
 }
 
-fn main() {
+pub fn run() {
     // This is a comment.
     println!("\n----------Variables Mutability----------");
     variables_mutability();

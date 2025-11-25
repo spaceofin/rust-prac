@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 #[derive(Debug)]
 struct User {
     active: bool,
@@ -172,7 +170,7 @@ fn structs_examples() {
 
 }
 
-fn main() {
+pub fn run() {
     println!("\n----------Structs Basic----------");
     structs_basic();
     println!("\n----------Structs Examples----------");

@@ -1,7 +1,3 @@
-#![allow(unused_variables)]
-#![allow(dead_code)]
-#![allow(unused_assignments)]
-
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -183,7 +179,7 @@ fn hashmap_examples() {
     println!("{word_map:?}");
 }
 
-fn main() {
+pub fn run() {
     // vector_examples();
     // string_examples();
     hashmap_examples();

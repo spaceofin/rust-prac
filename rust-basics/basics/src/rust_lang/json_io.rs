@@ -1,7 +1,7 @@
 use std::io::{self, Write};
 use basics::commands::json_io::{save_json,load_json};
 
-fn main() {
+pub fn run() {
     loop {
         println!();
         print!("-----Enter Command Number-----\n1. save | 2. load | 3. exit > ");

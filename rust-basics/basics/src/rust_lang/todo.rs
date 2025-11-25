@@ -1,6 +1,6 @@
 use std::io;
 
-fn main() {
+pub fn run() {
     let mut todos: Vec<String> = Vec::new();
 
     loop {

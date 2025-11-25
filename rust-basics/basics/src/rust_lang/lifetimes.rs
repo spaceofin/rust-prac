@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-#![allow(unused_variables)]
 use std::fmt::Display;
 
 // fn dangling_reference_example() {
@@ -144,7 +142,7 @@ fn lifetimes_demo() {
     println!("{longest}");
 }
 
-fn main() {
+pub fn run() {
     // generic_lifetimes();
     // struct_lifetimes();
     // lifetime_elision();

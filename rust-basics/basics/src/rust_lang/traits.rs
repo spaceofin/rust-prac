@@ -1,7 +1,3 @@
-
-#![allow(dead_code)]
-#![allow(unused_variables)]
-
 use std::fmt::{Display, Debug};
 
 pub trait Summary {
@@ -244,7 +240,7 @@ fn trait_examples() {
     b.print();
 }
 
-fn main() {
+pub fn run() {
     // trait_basic_examples();
     trait_examples();
 }

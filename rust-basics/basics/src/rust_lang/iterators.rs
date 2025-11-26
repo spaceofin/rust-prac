@@ -10,7 +10,22 @@ fn iterator_demonstration() {
     assert_eq!(v1_iter.next(), None);
 }
 
-fn iterators_demo() {
+#[derive(PartialEq, Debug)]
+struct Shoe {
+    size: u32,
+    style: String,
+}
+
+fn shoes_in_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
+    shoes.into_iter().filter(|s| s.size == shoe_size).collect()
+}
+
+fn shoes_in_size_by_ref(shoes: &Vec<Shoe>, shoe_size: u32) -> Vec<&Shoe> {
+    shoes.iter().filter(|s| s.size == shoe_size).collect()
+}
+
+
+fn iterators_basic() {
     let v1 = vec![1, 2, 3];
     let v1_iter = v1.iter();
     println!("-----v1_iter-----");
@@ -50,6 +65,44 @@ fn iterators_demo() {
     println!("V4: {v4:?}");
 }
 
+fn iterators_demo() {
+    let v1: Vec<i32> = vec![1, 2, 3];
+    let v1_clone: Vec<_> = v1.iter().map(|x| x).collect();
+    let v1_plus: Vec<i32> = v1.iter().map(|x| x + 1).collect();
+    let v1_string: Vec<String> = v1.iter().map(|x| x.to_string()).collect();
+
+    println!("v1_clone: {v1_clone:?}");
+    println!("v1_plus: {v1_plus:?}");
+    println!("v1_string: {v1_string:?}");
+
+    let shoes = vec![
+            Shoe {
+                size: 10,
+                style: String::from("sneaker"),
+            },
+            Shoe {
+                size: 13,
+                style: String::from("sandal"),
+            },
+            Shoe {
+                size: 10,
+                style: String::from("boot"),
+            },
+        ];
+
+    let shoes_filter_13: Vec<_> = shoes.iter().filter(|s| s.size == 13).collect();
+    println!("shoes_filter_13:\n{shoes_filter_13:#?}");
+    let shoes_in_10_size_by_ref: Vec<_> = shoes_in_size_by_ref(&shoes, 10);
+    println!("shoes_in_10_size_by_ref:\n{shoes_in_10_size_by_ref:#?}");
+    println!("shoes:{shoes:?}");
+
+    let shoes_in_10_size = shoes_in_size(shoes, 10);
+    println!("shoes_in_10_size:\n{shoes_in_10_size:#?}");
+    // Compile Error: value borrowed after move.
+    // println!("shoes:{shoes:?}");
+}
+
 pub fn run() {
+    // iterators_basic();
     iterators_demo();
 }

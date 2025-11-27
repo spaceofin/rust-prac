@@ -10,6 +10,7 @@ mod common_concepts;
 mod enums;
 mod generics;
 mod guessing_game;
+mod io;
 mod iterators;
 mod json_io;
 mod lifetimes;
@@ -25,7 +26,8 @@ fn main() {
 // enums::run();
 // generics::run();
 // guessing_game::run();
-iterators::run();
+io::run();
+// iterators::run();
 // json_io::run();
 // lifetimes::run();
 // ownership::run();

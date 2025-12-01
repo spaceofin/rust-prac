@@ -218,6 +218,132 @@ fn pattern_examples() {
     let ((feet, inches), Point { x, y }) = ((3, 10), Point { x: 3, y: -10 });
     println!("feet: {feet}, inches: {inches}, x: {x}, y: {y}");
 
+    // Ignoring Values in a Pattern
+
+    // An Entire Value with_
+    fn foo(_: i32, y: i32) {
+        println!("This code only uses the y parameter: {y}");
+    }
+    foo(3,4);
+
+    // Parts of a Value with a Nested _
+    let mut setting_value = Some(5);
+    // let new_setting_value = Some(0);
+    let new_setting_value = Some(10);
+
+    match (setting_value, new_setting_value) {
+        (Some(_), Some(0)) => {
+            println!("A setting value of 0 is not allowed.");
+        },
+        (Some(5), Some(_)) => {
+            println!("Default value 5 is being used. Can't overwrite.");
+        },
+        (Some(_), Some(_)) => {
+            println!("Can't overwrite an existing customized value");
+        }
+        _ => {
+            setting_value = new_setting_value;
+        }
+    }
+
+    let numbers = (2, 4, 8, 16, 32);
+
+    match numbers {
+        (first, _, third, _, fifth) => {
+            println!("Some numbers: {first}, {third}, {fifth}");
+        }
+    }
+
+    // An Unused Variable by Starting Its Name with _
+    let _x = 5;
+
+    let s = Some(String::from("Hello!"));
+    // '_' doesn't bind.
+    if let Some(_)= s {
+        println!("found a string");
+    }
+    println!("{s:?}");
+    // '_s' binds the value to the variable.
+    if let Some(_s)= s {
+        println!("found a string");
+    }
+    // Compile Error: value borrowed after partial move.
+    // println!("{s:?}");
+
+    // Remaining Parts of a Value with ..
+    struct Point3D {
+        x: i32,
+        y: i32,
+        z: i32,
+    }
+
+    let origin = Point3D { x: 0, y: 0, z: 0 };
+
+    match origin {
+        Point3D { x, .. } => println!("x is {x}"),
+        // unreachable pattern
+        // Point3D { x, y, z } => println!("x is {x}, y is {y}, z is {z}"),
+    }
+
+    let numbers = (2, 4, 8, 16, 32);
+    match numbers {
+        (first, .., last) => {
+            println!("Some numbers: {first}, {last}");
+        }
+    }
+    match numbers {
+        // Compile Error: '..' can only be used once per tuple pattern
+        // (.., second, ..) => {
+        //     println!("Some numbers: {second}")
+        // },
+        (_, second, ..) => {
+            println!("Some numbers: {second}")
+        }
+    }
+
+    // Extra Conditionals with Match Guards
+    let num = Some(4);
+    match num {
+        Some(x) if x % 2 == 0 => println!("The number {x} is even"),
+        Some(x) => println!("The number {x} is odd"),
+        None => (),
+    }
+
+    // let x = Some(5);
+    let x = Some(10);
+    let y = 10;
+
+    match x {
+        Some(50) => println!("Got 50"),
+        Some(n) if n == y => println!("Matched, n = {n}"),
+        _ => println!("Default case, x = {x:?}"),
+    }
+    println!("at the end: x = {x:?}, y = {y}");
+
+    let x = 4;
+    let y = true;
+
+    match x {
+        // '|' is 'or' operator to specify multiple pattenrs.
+        4 | 5 | 6 if y => println!("yes"),
+        _ => println!("no"),
+    }
+
+    // @ Bindings
+    // The 'at' operator enables holding a value while simultaneously testing that value for a pattern match.
+    enum Greeting {
+        Hello { id: i32 },
+    }
+    let msg = Greeting::Hello { id: 5 };
+    match msg {
+        Greeting::Hello { id: id @ 3..=7 } => {
+            println!("Found an id in range: {id}")
+        }
+        Greeting::Hello { id: 10..=12 } => {
+            println!("Found an id in another range")
+        }
+        Greeting::Hello { id } => println!("Found some other id: {id}"),
+    }
 }
 
 pub fn run() {

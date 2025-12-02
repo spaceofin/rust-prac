@@ -27,12 +27,12 @@ fn main() {
 // enums::run();
 // generics::run();
 // guessing_game::run();
-// io::run();
+io::run();
 // iterators::run();
 // json_io::run();
 // lifetimes::run();
 // ownership::run();
-pattern_matching::run();
+// pattern_matching::run();
 // structs::run();
 // todo::run();
 // traits::run();

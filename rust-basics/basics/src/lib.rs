@@ -16,3 +16,5 @@ pub mod multiplier{
         a * b
     }
 }
+
+pub mod library;

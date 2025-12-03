@@ -1,6 +1,5 @@
-use std::{env, fs};
+use std::{env, fs, process, error::Error};
 use std::path::{Path, PathBuf};
-use std::process;
 
 fn read_args() {
     let args: Vec<String> = env::args().collect();
@@ -69,10 +68,17 @@ impl Config {
     }
 }
 
-fn run_with_config(config: Config) {
-    let contents = fs::read_to_string(config.file_path)
-        .expect("Should have been able to read the file"); 
-    println!("With text:\n{contents}");
+use basics::library::search::search_lines;
+
+fn run_with_config(config: Config) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(config.file_path)?;
+    // println!("With text:\n{contents}");
+    println!("\n-----contents-----\n{contents}");
+    println!("\n-----search results-----");
+    for line in search_lines(&config.query, &contents) {
+        println!("found: {line}");
+    }
+    Ok(())
 }
 
 fn config_demo() {
@@ -82,9 +88,13 @@ fn config_demo() {
         process::exit(1);
     });
     // println!("config: {config:?}");
-    println!("Searching for {}", config.query);
+    println!("Searching for '{}'", config.query);
     println!("In file {}", config.file_path);
-    run_with_config(config);
+
+    if let Err(e) = run_with_config(config) {
+        println!("Application error: {e}");
+        process::exit(1);
+    }
 }
 
 pub fn run() {

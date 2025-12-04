@@ -1,5 +1,6 @@
 use std::{env, fs, process, error::Error};
 use std::path::{Path, PathBuf};
+use basics::library::search::{search_lines, search_lines_case_insensitive};
 
 fn read_args() {
     let args: Vec<String> = env::args().collect();
@@ -50,6 +51,7 @@ fn read_file() {
 struct Config {
     query: String,
     file_path: String,
+    ignore_case: bool,
 }
 
 impl Config {
@@ -64,18 +66,24 @@ impl Config {
         }
         let query = args[1].clone();
         let file_path = args[2].clone();
-        Ok(Self { query, file_path })
+
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
+
+        Ok(Self { query, file_path, ignore_case })
     }
 }
-
-use basics::library::search::search_lines;
 
 fn run_with_config(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.file_path)?;
     // println!("With text:\n{contents}");
     println!("\n-----contents-----\n{contents}");
     println!("\n-----search results-----");
-    for line in search_lines(&config.query, &contents) {
+    let results = if config.ignore_case {
+        search_lines_case_insensitive(&config.query, &contents)
+    } else {
+        search_lines(&config.query, &contents)
+    };
+    for line in results {
         println!("found: {line}");
     }
     Ok(())
@@ -94,6 +102,35 @@ fn config_demo() {
     if let Err(e) = run_with_config(config) {
         println!("Application error: {e}");
         process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn case_sensitive() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Duct tape.";
+        assert_eq!(vec!["safe, fast, productive."], search_lines(query, contents));
+    }
+
+    #[test]
+    fn case_insensitive() {
+        let query = "rUsT";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+        assert_eq!(
+            vec!["Rust:", "Trust me."], search_lines_case_insensitive(query, contents)
+        );
     }
 }
 

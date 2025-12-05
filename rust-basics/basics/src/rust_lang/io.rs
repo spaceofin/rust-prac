@@ -92,7 +92,7 @@ fn run_with_config(config: Config) -> Result<(), Box<dyn Error>> {
 fn config_demo() {
     let args: Vec<String> = env::args().collect();
     let config = Config::build(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {err}");
+        eprintln!("Problem parsing arguments: {err}");
         process::exit(1);
     });
     // println!("config: {config:?}");
@@ -100,7 +100,7 @@ fn config_demo() {
     println!("In file {}", config.file_path);
 
     if let Err(e) = run_with_config(config) {
-        println!("Application error: {e}");
+        eprintln!("Application error: {e}");
         process::exit(1);
     }
 }

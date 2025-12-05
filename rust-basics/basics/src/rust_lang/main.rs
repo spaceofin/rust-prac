@@ -27,8 +27,8 @@ fn main() {
 // enums::run();
 // generics::run();
 // guessing_game::run();
-io::run();
-// iterators::run();
+// io::run();
+iterators::run();
 // json_io::run();
 // lifetimes::run();
 // ownership::run();

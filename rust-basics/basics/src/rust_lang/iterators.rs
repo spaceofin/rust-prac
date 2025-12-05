@@ -1,3 +1,6 @@
+use std::{env, process};
+use super::io::{Config, run_with_config};
+
 #[test]
 fn iterator_demonstration() {
     let v1 = vec![1, 2, 3];
@@ -102,7 +105,51 @@ fn iterators_demo() {
     // println!("shoes:{shoes:?}");
 }
 
+impl Config {
+    fn build_from_iter(
+        mut args: impl Iterator<Item = String>,
+    ) -> Result<Config, &'static str> {
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
+
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
+
+        Ok(Config {
+            query,
+            file_path,
+            ignore_case,
+        })
+    }
+}
+
+fn config_demo() {
+    let args: Vec<String> = env::args().collect();
+
+    let config = Config::build_from_iter(env::args()).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {err}");
+        process::exit(1);
+    });
+
+    println!("Searching for '{}'", config.query);
+    println!("In file {}", config.file_path);
+
+    if let Err(e) = run_with_config(config) {
+        eprintln!("Application error: {e}");
+        process::exit(1);
+    }
+}
+
 pub fn run() {
     // iterators_basic();
-    iterators_demo();
+    // iterators_demo();
+    config_demo();
 }

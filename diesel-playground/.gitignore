@@ -1,1 +1,8 @@
+# Build output
 /target/
+
+# Environment variables
+.env
+
+# Database
+*.db

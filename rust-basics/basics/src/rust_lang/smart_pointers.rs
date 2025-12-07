@@ -1,6 +1,8 @@
 // use crate::smart_pointers::List::{Cons, Nil};
 use List::{Cons, Nil};
 use BinaryTree::{Leaf, Node};
+use std::ops::Deref;
+use std::fmt;
 
 #[derive(Debug)]
 enum List {
@@ -37,6 +39,74 @@ fn smart_pointers_basics() {
     println!("binary tree:\n{binary_tree:#?}");
 }
 
+struct NoDerefBox<T>(T);
+
+impl<T> NoDerefBox<T> {
+    fn new(x: T) -> NoDerefBox<T> {
+        NoDerefBox(x)
+    }
+}
+
+impl<T> fmt::Pointer for NoDerefBox<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let ptr: *const T = &self.0;
+        fmt::Pointer::fmt(&ptr, f)
+    }
+}
+
+// A practice smart pointer that stores its value on the stack,
+// not on the heap like `Box<T>`. Used for understanding how `Deref` works.
+struct DerefBox<T>(T);
+
+impl<T> DerefBox<T> {
+    fn new(x: T) -> DerefBox<T> {
+        DerefBox(x)
+    }
+}
+
+impl<T> Deref for DerefBox<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<T> fmt::Pointer for DerefBox<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let ptr: *const T = &**self;
+        fmt::Pointer::fmt(&ptr, f)
+    }
+}
+
+fn deref_examples() {
+    println!("-----Box-----");
+    let x = 5;
+    let y1 = &x;
+    let y2 = &x;
+    let z1 = Box::new(x);
+    let z2 = Box::new(x);
+
+    println!("x: {x}");
+    println!("&y1: {:p}, y1: {:p}, *y1: {}", &y1, y1, *y1);
+    println!("&y2: {:p}, y2: {:p}, *y2: {}", &y2, y2, *y2);
+    println!("&z1: {:p}, z1: {:p}, *z1: {}", &z1, z1, *z1);
+    println!("&z2: {:p}, z2: {:p}, *z2: {}", &z2, z2, *z2);
+
+    println!("-----Deref & NoDeref Box-----");
+    let a = 10;
+    let b = DerefBox::new(a);
+    let c = DerefBox::new(a);
+    let no_deref_d = NoDerefBox::new(a);
+
+    println!("a: {}", a); 
+    println!("&b: {:p}, b: {:p}, *b: {}", &b ,b ,*b); 
+    println!("&c: {:p}, c: {:p}, *c: {}", &c, c, *c);
+    println!("&no_deref_d: {:p}, no_deref_d: {:p}, no_deref_d: {}", &no_deref_d, no_deref_d, no_deref_d.0);
+    // Compile Error: `no_deref_d` can't be dereferenced.
+    // println!("*no_deref_d: {}", *no_deref_d);
+}
+
 pub fn run() {
-    smart_pointers_basics();
+    // smart_pointers_basics();
+    deref_examples();
 }

@@ -1,7 +1,7 @@
 // use crate::smart_pointers::List::{Cons, Nil};
 use List::{Cons, Nil};
 use BinaryTree::{Leaf, Node};
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 use std::fmt;
 
 #[derive(Debug)]
@@ -106,7 +106,61 @@ fn deref_examples() {
     // println!("*no_deref_d: {}", *no_deref_d);
 }
 
+struct MyBox<T>(T);
+impl<T> MyBox<T> {
+    fn new(x: T) -> MyBox<T> { MyBox(x) }
+}
+impl<T> Deref for MyBox<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target { &self.0 }
+}
+impl<T> DerefMut for MyBox<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.0 }
+}
+
+struct Pointer1<T>(T);
+impl<T> Deref for Pointer1<T> {
+    type Target = T;
+    fn deref(&self) -> &T { &self.0 }
+}
+
+struct Pointer2<T>(T);
+impl<T> Deref for Pointer2<T> {
+    type Target = T;
+    fn deref(&self) -> &T { &self.0 }
+}
+
+fn hello(name: &str) {
+    println!("Hello, {name}!");
+}
+fn value(value: &i32) {
+    println!("Value, {value}!");
+}
+fn value_plus_one(value: &mut i32){
+    println!("Value Plus One, {}!", *value + 1);
+}
+fn value_ref(value: &i32){
+    println!("Value Ref, {value}!");
+}
+
+fn deref_coercion_examples() {
+    let m = MyBox::new(String::from("Rust"));
+    let v = DerefBox(Pointer1(Pointer2(123)));
+    let mut vv = 123;
+    println!("-----no deref coercion-----");
+    hello(&*m);
+    value(&***v);
+    println!("-----deref coercion-----");
+    hello(&m);
+    value(&**v);
+    value(&*v);
+    value(&v);
+    value_plus_one(&mut vv);
+    value_ref(&mut vv);
+}
+
 pub fn run() {
     // smart_pointers_basics();
-    deref_examples();
+    // deref_examples();
+    deref_coercion_examples();
 }

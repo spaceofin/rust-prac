@@ -159,8 +159,35 @@ fn deref_coercion_examples() {
     value_ref(&mut vv);
 }
 
+struct CustomSmartPointer {
+    data: String,
+}
+
+impl Drop for CustomSmartPointer {
+    fn drop(&mut self) {
+        println!("Dropping CustomSmartPointer with data `{}`!", self.data);
+    }
+}
+
+fn drop_examples() {
+    let c = CustomSmartPointer {
+        data: String::from("my stuff"),
+    };
+    let d = CustomSmartPointer {
+        data: String::from("other stuff"),
+    };
+    println!("CustomSmartPointers created.");
+    // Compile Error: explicit destructor calls not allowed
+    // d.drop();
+
+    // std::mem::drop
+    drop(d);
+    println!("CustomSmartPointer dropped before the end of the function.");
+}
+
 pub fn run() {
     // smart_pointers_basics();
     // deref_examples();
-    deref_coercion_examples();
+    // deref_coercion_examples();
+    drop_examples();
 }

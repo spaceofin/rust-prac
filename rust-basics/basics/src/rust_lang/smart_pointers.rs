@@ -2,7 +2,8 @@
 use List::{Cons, Nil};
 use BinaryTree::{Leaf, Node};
 use std::ops::{Deref, DerefMut};
-use std::fmt;
+use std::{fmt, rc::Rc};
+use RcList::{Cons as RcCons, Nil as RcNil};
 
 #[derive(Debug)]
 enum List {
@@ -185,9 +186,31 @@ fn drop_examples() {
     println!("CustomSmartPointer dropped before the end of the function.");
 }
 
+#[derive(Debug)]
+enum RcList {
+    Cons(i32, Rc<RcList>),
+    Nil,
+}
+
+fn rc_examples() {
+    let a = Rc::new(RcCons(5, Rc::new(RcCons(10, Rc::new(RcNil)))));
+    println!("reference count after creating a = {}", Rc::strong_count(&a));
+    let b = RcCons(3, Rc::clone(&a));
+    println!("reference count after creating b = {}", Rc::strong_count(&a));
+    {
+        let c = RcCons(4, Rc::clone(&a));
+        println!("reference count after creating c = {}", Rc::strong_count(&a));
+        println!("a: {a:?}\nb: {b:?}\nc: {c:?}");
+        // When `c` goes out of scope at the end of this block,
+        // its Drop is automatically called and the reference count of `a` decreases.
+    }
+    println!("reference count after c goes out of scope = {}", Rc::strong_count(&a));
+}
+
 pub fn run() {
     // smart_pointers_basics();
     // deref_examples();
     // deref_coercion_examples();
-    drop_examples();
+    // drop_examples();
+    rc_examples();
 }

@@ -302,10 +302,61 @@ mod tests {
     }
 }
 
+use std::cell::RefCell;
+use RefCellList::{Cons as RefCellCons, Nil as RefCellNil};
+
+#[derive(Debug)]
+enum RefCellList {
+    Cons(Rc<RefCell<i32>>, Rc<RefCellList>),
+    Nil,
+}
+
 fn ref_cell_examples() {
     let x = 5;
     // Compile Error: cannot borrow `x` as mutable, as it is not declared as mutable
     // let y = &mut x;
+
+    let refcell1 = RefCell::new(1);
+    {
+        let ref1 = refcell1.borrow();
+        println!("refcell1: {refcell1:?}");
+        println!("ref1: {ref1:?}");
+        // Runtime panic: RefCell<T> cannot borrow mutably because an immutable borrow already exists.
+        // let ref2 = refcell1.borrow_mut();
+    }
+
+    {
+        let mut ref2 = refcell1.borrow_mut();
+        *ref2 += 1;
+    }
+
+    *(refcell1.borrow_mut()) += 1;
+    println!("refcell1 after: {refcell1:?}\n");
+
+
+    let refcell2 = RefCell::new(2);
+    let rc1 = Rc::new(refcell2);
+    let rc2 = Rc::clone(&rc1);
+    let rc3 = Rc::clone(&rc1);
+
+    *rc1.borrow_mut() *= 10;
+    *(rc2.borrow_mut()) *= 10;
+
+    println!("rc1: {rc1:?}");
+    println!("rc2: {rc2:?}");
+    println!("rc3: {rc3:?}");
+
+    let value = Rc::new(RefCell::new(5));
+    let a_cons = RefCellCons(Rc::clone(&value), Rc::new(RefCellNil));
+    let a = Rc::new(a_cons);
+    let b = RefCellCons(Rc::new(RefCell::new(3)), Rc::clone(&a));
+    let c = RefCellCons(Rc::new(RefCell::new(4)), Rc::clone(&a));
+
+    *value.borrow_mut() += 10;
+
+    println!("a after = {a:?}");
+    println!("b after = {b:?}");
+    println!("c after = {c:?}");
 }
 
 pub fn run() {

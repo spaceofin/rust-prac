@@ -15,7 +15,7 @@ pub fn establish_connection() -> SqliteConnection {
 }
 
 pub fn create_post(conn: &mut SqliteConnection, title: &str, body: &str) -> Post {
-    use crate::schema::posts;
+    use self::schema::posts;
 
     let new_post = NewPost { title, body };
 

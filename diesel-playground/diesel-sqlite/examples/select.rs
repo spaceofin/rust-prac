@@ -34,7 +34,7 @@ fn select_users_with_querydsl(connection: &mut SqliteConnection) {
   .load::<(i32, String, Option<String>, NaiveDateTime, NaiveDateTime)>(connection).expect("failed to load users");
 
   for user in users_with_green_hair {
-    println!("User {} has grean hair", user.1);
+    println!("User {} has green hair", user.1);
   }
    println!();
 
@@ -65,9 +65,66 @@ fn select_users_with_querydsl(connection: &mut SqliteConnection) {
   }
 }
 
+
+
+fn select_users_with_hasquery(connection: &mut SqliteConnection) {
+
+  #[derive(HasQuery)]
+  #[diesel(table_name = self::schema::users)]
+  struct User {
+      name: String,
+      hair_color: Option<String>,
+      id: i32,
+  }
+
+// This now returns a `Vec<User>`, which is automatically infered
+// by using `User::query()` to construct your query
+  let users_with_green_hair = User::query()
+      .filter(hair_color.eq("green"))
+      .order_by(updated_at.desc())
+      .load(connection)
+      .expect("failed to load users");
+
+  for user in users_with_green_hair {
+    println!("User {} has green hair", user.name);
+  }
+   println!();
+
+
+     use diesel::sql_types::{Nullable, Integer};
+  use diesel::dsl::sql;
+  use diesel::expression::SqlLiteral;
+
+  #[derive(HasQuery)]
+  #[diesel(table_name = self::schema::users)]
+  #[diesel(base_query = users.order_by(updated_at.asc()))]
+  struct CustomUser {
+      id: i32,
+      name: String,
+      hair_color: Option<String>,
+      // This does not work: it is an AggregateExpression, not a SelectableExpression.
+      // #[diesel(select_expression = lag(id).partition_by(hair_color))]
+      #[diesel(select_expression = sql::<Nullable<Integer>>("LAG(id) OVER (PARTITION BY hair_color)"))]
+      #[diesel(select_expression_type = SqlLiteral<Nullable<Integer>>)]
+      last_user_with_same_hair_color: Option<i32>,
+  }
+  
+  let custom_users = CustomUser::query().load(connection).expect("failed to load users");
+
+  for user in custom_users {
+      println!("User {} has the hair color {:?}", user.name, user.hair_color);
+      if let Some(lag_id) = user.last_user_with_same_hair_color {
+          println!("->The user with {lag_id} the has the same hair color");
+      }
+  }
+}
+
+
+
 fn main() {
   let connection = &mut establish_connection();
   // select_version(connection);
   // select_all_users(connection);
-  select_users_with_querydsl(connection);
+  // select_users_with_querydsl(connection);
+  select_users_with_hasquery(connection);
 }

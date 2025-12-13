@@ -406,6 +406,43 @@ fn reference_cycle() {
     // println!("a next item = {:?}", a.tail());
 }
 
+fn print_list_n(cur: &Rc<CyclicList>, n: usize) {
+    let mut cur = Rc::clone(cur);
+
+    for _ in 0..n {
+        match &*cur {
+            CLNil => {
+                println!("Nil");
+                return;
+            }
+            CLCons(val, next) => {
+                print!("{val} -> ");
+                let next_rc = Rc::clone(&next.borrow());
+                cur = next_rc;
+            }
+        }
+    }
+    println!("...");
+}
+
+fn tri_reference_cycle() {
+    let a = Rc::new(CLCons(1, RefCell::new(Rc::new(CLNil))));
+    let b = Rc::new(CLCons(2, RefCell::new(Rc::clone(&a))));
+    let c = Rc::new(CLCons(3, RefCell::new(Rc::clone(&b))));
+    if let Some(link) = a.tail() {
+        *link.borrow_mut() = Rc::clone(&c);
+    }
+    print!("a: ");
+    print_list_n(&a, 10);
+    print!("b: ");
+    print_list_n(&b, 10);
+    print!("c: ");
+    print_list_n(&c, 10);
+    println!("a rc count: {}", Rc::strong_count(&a));
+    println!("b rc count: {}", Rc::strong_count(&b));
+    println!("c rc count: {}", Rc::strong_count(&c));
+}
+
 pub fn run() {
     // smart_pointers_basics();
     // deref_examples();
@@ -413,5 +450,6 @@ pub fn run() {
     // drop_examples();
     // rc_examples();
     // ref_cell_examples();
-    reference_cycle();
+    // reference_cycle();
+    tri_reference_cycle();
 }

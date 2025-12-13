@@ -359,11 +359,59 @@ fn ref_cell_examples() {
     println!("c after = {c:?}");
 }
 
+use CyclicList::{Cons as CLCons, Nil as CLNil};
+
+#[derive(Debug)]
+enum CyclicList {
+    Cons(i32, RefCell<Rc<CyclicList>>),
+    Nil,
+}
+
+impl CyclicList {
+    fn tail(&self) -> Option<&RefCell<Rc<CyclicList>>> {
+        match self {
+            CLCons(_, item) => Some(item),
+            CLNil => None,
+        }
+    }
+}
+
+fn reference_cycle() {
+    let a = Rc::new(CLCons(5, RefCell::new(Rc::new(CLNil))));
+
+    println!("a initial rc count = {}", Rc::strong_count(&a));
+    println!("Rc<List> stack address: {:p}",&a);
+    // println!("Rc<List> points to heap List: {:?}",Rc::as_ptr(&a));
+    println!("Rc<List> points to heap List: {:p}",&*a);
+    // println!("a: {:?}",*a);
+    println!("a: {:?}",a); // Deref Coercion
+    // println!("a next item = {:?}", (&*a).tail());
+    println!("a next item = {:?}", a.tail()); // Deref Coercion
+
+    let b = Rc::new(CLCons(10, RefCell::new(Rc::clone(&a))));
+
+    println!("a rc count after b creation = {}", Rc::strong_count(&a));
+    println!("b initial rc count = {}", Rc::strong_count(&b));
+    println!("b next item = {:?}", b.tail());
+
+    if let Some(link) = a.tail() {
+        *link.borrow_mut() = Rc::clone(&b);
+    }
+
+    println!("b rc count after changing a = {}", Rc::strong_count(&b));
+    println!("a rc count after changing a = {}", Rc::strong_count(&a));
+
+    // Uncomment the next line to see that we have a cycle;
+    // it will overflow the stack.
+    // println!("a next item = {:?}", a.tail());
+}
+
 pub fn run() {
     // smart_pointers_basics();
     // deref_examples();
     // deref_coercion_examples();
     // drop_examples();
     // rc_examples();
-    ref_cell_examples();
+    // ref_cell_examples();
+    reference_cycle();
 }

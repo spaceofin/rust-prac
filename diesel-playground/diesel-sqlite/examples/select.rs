@@ -91,7 +91,7 @@ fn select_users_with_hasquery(connection: &mut SqliteConnection) {
    println!();
 
 
-     use diesel::sql_types::{Nullable, Integer};
+  use diesel::sql_types::{Nullable, Integer};
   use diesel::dsl::sql;
   use diesel::expression::SqlLiteral;
 
@@ -119,12 +119,72 @@ fn select_users_with_hasquery(connection: &mut SqliteConnection) {
   }
 }
 
+fn result_mapping(connection: &mut SqliteConnection) {
+  let ids = users.select(id)
+    .load::<i32>(connection)
+    .expect("failed to load users");
+  println!("\nids:\n{ids:?}");
 
+  // Single element tuple results
+  let names = users.select((name,))
+    .load::<(String,)>(connection)
+    .expect("failed to load users");
+  println!("names:\n{names:?}");
+  let ids_and_names = users.select((id, name))
+    .load::<(i32, String)>(connection)
+    .expect("failed to load users");
+  println!("\nids and names:\n{ids_and_names:?}");
+
+  let nested_result = users.select((id, name, (id, name)))
+    .load::<(i32, String, (i32, String))>(connection)
+    .expect("failed to load users");
+  println!("\nnested_result:\n{nested_result:?}");
+
+  #[derive(Queryable, Debug)]
+  struct UserCore {
+    id: i32,
+    name: String,
+  }
+
+  let user_core_infos = users.select((id, name))
+    .load::<UserCore>(connection)
+    .expect("failed to load users");
+  println!("\nuser_core_infos:\n{user_core_infos:?}");
+
+  #[derive(Queryable, Selectable, Debug)]
+  #[diesel(table_name = self::schema::users)]
+  #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+  struct UserCoreSelectable {
+    id: i32,
+    name: String,
+  }
+
+  let user_infos = users.select(UserCoreSelectable::as_select())
+    .load(connection)
+    .expect("failed to load users");
+  println!("\nuser_infos:\n{user_infos:?}");
+
+  #[derive(HasQuery, Debug)]
+  #[diesel(table_name = self::schema::users)]
+  struct UserForHasQuery {
+      id: i32,
+      name: String,
+  }
+
+  let user_hasquery_infos = UserForHasQuery::query()
+    .load(connection)
+    .expect("failed to load users");
+  println!("\nuser_hasquery_infos:\n{user_hasquery_infos:?}");
+
+}
+
+  
 
 fn main() {
   let connection = &mut establish_connection();
   // select_version(connection);
   // select_all_users(connection);
   // select_users_with_querydsl(connection);
-  select_users_with_hasquery(connection);
+  // select_users_with_hasquery(connection);
+  result_mapping(connection);
 }

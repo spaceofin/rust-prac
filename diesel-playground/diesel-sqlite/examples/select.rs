@@ -65,8 +65,6 @@ fn select_users_with_querydsl(connection: &mut SqliteConnection) {
   }
 }
 
-
-
 fn select_users_with_hasquery(connection: &mut SqliteConnection) {
 
   #[derive(HasQuery)]

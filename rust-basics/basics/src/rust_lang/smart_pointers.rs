@@ -1,8 +1,9 @@
 // use crate::smart_pointers::List::{Cons, Nil};
 use List::{Cons, Nil};
-use BinaryTree::{Leaf, Node};
+use BinaryTree::{Leaf as BTLeaf, Node as BTNode};
 use std::ops::{Deref, DerefMut};
-use std::{fmt, rc::Rc};
+use std::fmt;
+use std::rc::{Rc, Weak};
 use RcList::{Cons as RcCons, Nil as RcNil};
 
 #[derive(Debug)]
@@ -28,27 +29,27 @@ fn smart_pointers_basics() {
     let list = Cons(1, Box::new(Cons(2, Box::new(Cons(3, Box::new(Nil))))));
     println!("list:\n{list:?}");
 
-    let binary_tree = Node {
+    let binary_tree = BTNode {
         value: 1,
-        left: Box::new(Leaf(2)),
-        right: Box::new(Node {
+        left: Box::new(BTLeaf(2)),
+        right: Box::new(BTNode {
             value: 3,
-            left: Box::new(Leaf(4)),
-            right: Box::new(Leaf(5)),
+            left: Box::new(BTLeaf(4)),
+            right: Box::new(BTLeaf(5)),
         }),
     };
     println!("binary tree:\n{binary_tree:#?}");
 }
 
-struct NoDerefBox<T>(T);
+struct BTNoderefBox<T>(T);
 
-impl<T> NoDerefBox<T> {
-    fn new(x: T) -> NoDerefBox<T> {
-        NoDerefBox(x)
+impl<T> BTNoderefBox<T> {
+    fn new(x: T) -> BTNoderefBox<T> {
+        BTNoderefBox(x)
     }
 }
 
-impl<T> fmt::Pointer for NoDerefBox<T> {
+impl<T> fmt::Pointer for BTNoderefBox<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let ptr: *const T = &self.0;
         fmt::Pointer::fmt(&ptr, f)
@@ -93,11 +94,11 @@ fn deref_examples() {
     println!("&z1: {:p}, z1: {:p}, *z1: {}", &z1, z1, *z1);
     println!("&z2: {:p}, z2: {:p}, *z2: {}", &z2, z2, *z2);
 
-    println!("-----Deref & NoDeref Box-----");
+    println!("-----Deref & BTNoderef Box-----");
     let a = 10;
     let b = DerefBox::new(a);
     let c = DerefBox::new(a);
-    let no_deref_d = NoDerefBox::new(a);
+    let no_deref_d = BTNoderefBox::new(a);
 
     println!("a: {}", a); 
     println!("&b: {:p}, b: {:p}, *b: {}", &b ,b ,*b); 
@@ -443,6 +444,68 @@ fn tri_reference_cycle() {
     println!("c rc count: {}", Rc::strong_count(&c));
 }
 
+fn weak_reference_basic() {
+    let rc  = Rc::new(42);
+    let weak = Rc::downgrade(&rc);
+
+    println!(
+        "initial: strong = {}, weak = {}",
+        Rc::strong_count(&rc),
+        Rc::weak_count(&rc),
+    );
+
+    if let Some(value) = weak.upgrade() {
+        println!("upgrade success: {}", value);
+        println!(
+            "after upgrade: strong = {}, weak = {}",
+            Rc::strong_count(&rc),
+            Rc::weak_count(&rc),
+        );
+    }
+
+    println!(
+        "before drop: strong = {}, weak = {}",
+        Rc::strong_count(&rc),
+        Rc::weak_count(&rc),
+    );
+
+    drop(rc);
+
+    match weak.upgrade() {
+        Some(_) => println!("upgrade success"),
+        None => println!("upgrade failed (value dropped)"),
+    }
+}
+
+#[derive(Debug)]
+struct Node {
+    value: i32,
+    parent: RefCell<Weak<Node>>,
+    children: RefCell<Vec<Rc<Node>>>,
+}
+
+fn weak_reference() {
+    let leaf = Rc::new(Node {
+        value: 3,
+        parent: RefCell::new(Weak::new()),
+        children: RefCell::new(vec![]),
+    });
+    println!("leaf: {leaf:#?}");
+    println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
+    println!();
+
+    let branch = Rc::new(Node {
+        value: 5,
+        parent: RefCell::new(Weak::new()),
+        children: RefCell::new(vec![Rc::clone(&leaf)]),
+    });
+    *(leaf.parent.borrow_mut()) = Rc::downgrade(&branch);
+    println!("branch: {branch:#?}");
+    println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
+    println!("leaf strong_count: {}, weak_count: {}", Rc::strong_count(&leaf), Rc::weak_count(&leaf));
+    println!("branch strong_count: {}, weak_count: {}", Rc::strong_count(&branch), Rc::weak_count(&branch));
+}
+
 pub fn run() {
     // smart_pointers_basics();
     // deref_examples();
@@ -451,5 +514,7 @@ pub fn run() {
     // rc_examples();
     // ref_cell_examples();
     // reference_cycle();
-    tri_reference_cycle();
+    // tri_reference_cycle();
+    // weak_reference_basic();
+    weak_reference();
 }

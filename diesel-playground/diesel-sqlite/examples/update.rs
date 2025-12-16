@@ -116,11 +116,59 @@ fn update_with_aschangeset(connection: &mut SqliteConnection) {
         body: Some("My new post"),
     });
   println!("query3:\n{}", debug_query::<Sqlite, _>(&query3));
+}
 
+fn execute_query(connection:&mut SqliteConnection) {
+
+  #[derive(Queryable, Debug)]
+  #[diesel(table_name = self::schema::articles)]
+  struct ArticleVisit {
+    id: i32,
+    visit_count: i32,
+  }
+
+  let query1_result: ArticleVisit = diesel::update(articles)
+    .filter(id.eq(2))
+    .set(visit_count.eq(visit_count+1))
+    .returning((id, visit_count))
+    .get_result(connection)
+    .expect("failed to update article");
+  println!("query1_result:\n{query1_result:?}");
+
+  let query2_result: Vec<ArticleVisit> = diesel::update(articles)
+      .filter(id.le(3))
+      .set(visit_count.eq(visit_count+1))
+      .returning((id, visit_count))
+      .get_results(connection)
+      .expect("failed to update articles");
+  println!("query2_result:\n{query2_result:?}");
+  
+  #[derive(AsChangeset, Debug)]
+  #[diesel(table_name = self::schema::articles)]
+  struct ArticleDraft {
+    draft: bool,
+  }
+
+  #[derive(Queryable, Debug)]
+  struct ArticleDraftResult {
+      id: i32,
+      draft: bool,
+  }
+
+  let query3_result: Vec<ArticleDraftResult> = diesel::update(articles)
+      .filter(id.le(3))
+      .set(&ArticleDraft {
+        draft: false,
+      })
+      .returning((id, draft))
+      .get_results(connection)
+      .expect("failed to update articles");
+  println!("query3_result:\n{query3_result:?}");
 }
 
 fn main() {
   let connection = &mut establish_connection();
   // update_basic(connection);
-  update_with_aschangeset(connection);
+  // update_with_aschangeset(connection);
+  execute_query(connection);
 }

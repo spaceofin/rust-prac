@@ -8,7 +8,7 @@ use diesel::{debug_query, sqlite::Sqlite};
 use serde::Deserialize;
 use serde_json;
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, PartialEq)]
 #[diesel(table_name = users)]
 struct User {
     id: i32,
@@ -115,11 +115,75 @@ fn batch_insert(connection: &mut SqliteConnection) {
     println!("inserted_users:\n{inserted_users:?}");
 }   
 
+fn returning_clause(connection: &mut SqliteConnection) {
+    use diesel::select;
+    use self::schema::users::dsl::*;
+
+    let now = select(diesel::dsl::now)
+        .get_result::<NaiveDateTime>(connection)
+        .expect("failed to fetch current timestamp from database");
+
+    let inserted_users: Vec<User> = diesel::insert_into(users)
+        .values(&vec![
+            (id.eq(100), name.eq("Sean")),
+            (id.eq(200), name.eq("Tess")),
+        ])
+        .get_results(connection)
+        .expect("failed to insert users");
+
+    let expected_users = vec![
+        User {
+            id: 100,
+            name: "Sean".into(),
+            hair_color: None,
+            created_at: now,
+            updated_at: now,
+        },
+        User {
+            id: 200,
+            name: "Tess".into(),
+            hair_color: None,
+            created_at: now,
+            updated_at: now,
+        },
+    ];
+    assert_eq!(expected_users, inserted_users);
+
+    println!("inserted_users:\n{inserted_users:?}");
+    println!("expected_users:\n{expected_users:?}");
+
+    let inserted_user = diesel::insert_into(users)
+    .values((id.eq(300), name.eq("Ruby")))
+    .get_result(connection)
+    .expect("failed to insert users");
+
+    let expected_user = User {
+        id: 300,
+        name: "Ruby".into(),
+        hair_color: None,
+        created_at: now,
+        updated_at: now,
+    };
+    assert_eq!(expected_user, inserted_user);
+
+    println!("inserted_user:\n{inserted_user:?}");
+    println!("expected_user:\n{expected_user:?}");
+
+    let inserted_user_id = diesel::insert_into(users)
+        .values(name.eq("Ruby"))
+        .returning(id)
+        .get_result::<i32>(connection)
+        .expect("failed to insert user");
+    
+    println!("inserted_user_id: {inserted_user_id:?}");
+}
+
 fn main() {
   let connection = &mut establish_connection();
     // insert_defaults(connection);
     // insert_user_with_name(connection, "Sean");
     // insert_user_with_name_and_haircolor(connection, "Tess", "Brown");
     // insert_with_insertable(connection);
-    batch_insert(connection);
+    // batch_insert(connection);
+    returning_clause(connection);
 }

@@ -7,6 +7,7 @@
 mod closures;
 mod collections;
 mod common_concepts;
+mod concurrency;
 mod enums;
 mod generics;
 mod guessing_game;
@@ -25,6 +26,7 @@ fn main() {
 // closures::run();
 // collections::run();
 // common_concepts::run();
+concurrency::run();
 // enums::run();
 // generics::run();
 // guessing_game::run();
@@ -33,7 +35,7 @@ fn main() {
 // json_io::run();
 // lifetimes::run();
 // ownership::run();
-smart_pointers::run();
+// smart_pointers::run();
 // pattern_matching::run();
 // structs::run();
 // todo::run();

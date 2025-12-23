@@ -1,6 +1,7 @@
 use std::thread;
 use std::time::Duration;
-use std::sync::mpsc;
+use std::sync::{mpsc, Mutex, Arc};
+
 
 fn spawn_and_main() {
     // spawned thread
@@ -195,6 +196,48 @@ fn spawn_multiple_senders_interleaving() {
     }
 }
 
+fn mutex_basic() {
+    let m = Mutex::new(5);
+
+    {
+        let mut num = m.lock().unwrap();
+        *num = 6;
+        println!("m inside first inner block =\n\t{m:?}"); // m = Mutex { data: "<locked>", poisoned: false, .. }
+
+        // Deadlock: trying to lock the mutex again in the same thread blocks indefinitely
+        // let mut num2 = m.lock().unwrap();
+    } // MutexGuard is dropped here, unlocking the mutex.
+
+    println!("m inside outer block =\n\t{m:?}");
+
+    {
+        let mut num = m.lock().unwrap();
+        *num += 1;
+    }
+    println!("m inside second inner block =\n\t{m:?}");
+}
+
+fn mutex_with_multiple_threads() {
+    // Rc cannot be sent between threads safely, so use Arc.
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let counter = Arc::clone(&counter);
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+            *num += 1;
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {}", *counter.lock().unwrap());
+}
+
 pub fn run() {
     // spawn_and_main();
     // spawn_with_join();
@@ -204,5 +247,7 @@ pub fn run() {
     // send_multiple_values();
     // mpsc();
     // mpsc_with_interleaving();
-    spawn_multiple_senders_interleaving();
+    // spawn_multiple_senders_interleaving();
+    // mutex_basic();
+    mutex_with_multiple_threads();
 }

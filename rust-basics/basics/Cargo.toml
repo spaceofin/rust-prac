@@ -8,7 +8,7 @@ default-run = "rust_lang"
 rand = "0.8.5"
 utils = { path = "../utils" }
 dirs-next = "2.0.0"
-trpl = "0.2.0"
+trpl = "0.3.0"
 library_demo = { path = "examples/library_demo" }
 itertools = "0.14.0"
 

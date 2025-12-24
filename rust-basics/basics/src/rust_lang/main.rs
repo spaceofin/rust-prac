@@ -4,6 +4,7 @@
 #![allow(unused_mut)]
 #![allow(unused_assignments)]
 
+mod asynchronous;
 mod closures;
 mod collections;
 mod common_concepts;
@@ -23,10 +24,11 @@ mod todo;
 mod traits;
 
 fn main() {
+  asynchronous::run();
 // closures::run();
 // collections::run();
 // common_concepts::run();
-concurrency::run();
+// concurrency::run();
 // enums::run();
 // generics::run();
 // guessing_game::run();

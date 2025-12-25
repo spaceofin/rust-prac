@@ -1,0 +1,11 @@
+[package]
+name = "concepts"
+version = "0.1.0"
+edition = "2024"
+default-run = "core"
+
+[dependencies]
+
+[[bin]]
+name = "core"
+path = "src/core/runner.rs"

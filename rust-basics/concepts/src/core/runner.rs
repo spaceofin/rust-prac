@@ -1,3 +1,7 @@
+#![allow(dead_code)]
+#![allow(unused_assignments)]
+
+mod cell;
 fn main() {
-    println!("core runner")
+    cell::run();
 }

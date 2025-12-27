@@ -170,6 +170,147 @@ fn count_numbers_partial_async() {
   });
 }
 
+fn message_passing_without_async_blocks() {
+  block_on(async{
+    println!("-- first block_on --");
+    let (tx, mut rx) = trpl::channel();
+
+    let val = String::from("hi");
+    tx.send(val).unwrap();
+
+    let received = rx.recv().await.unwrap();
+    println!("received '{received}'");
+  });
+
+  block_on(async{
+    println!("-- second block_on --");
+    let (tx, mut rx) = trpl::channel();
+
+    let vals = vec![
+        String::from("hi"),
+        String::from("from"),
+        String::from("the"),
+        String::from("future"),
+    ];
+
+    let vals_len = vals.len();
+
+    for val in vals {
+        tx.send(val).unwrap();
+        trpl::sleep(Duration::from_millis(500)).await;
+    }
+
+    for _ in 0..vals_len {
+      let received = rx.recv().await.unwrap();
+      println!("received '{received}'");
+    }
+  });
+
+  block_on(async{
+    println!("-- third block_on --");
+    let (tx, mut rx) = trpl::channel();
+
+    let vals = vec![
+        String::from("hi"),
+        String::from("from"),
+        String::from("the"),
+        String::from("future"),
+    ];
+
+    for val in vals {
+        tx.send(val).unwrap();
+        trpl::sleep(Duration::from_millis(500)).await;
+    }
+
+    drop(tx);
+
+    // while let Some(value) = rx.recv().await {
+    //     println!("received '{value}'");
+    // }
+    loop {
+      match rx.recv().await {
+          Some(value) => {
+              println!("received '{value}'");
+          }
+          None => {
+              println!("channel closed (received None)");
+              break;
+          }
+      }
+    }
+  });
+}
+
+fn message_passing() {
+  block_on(async {
+    println!("-- joining sender and receiver futures --");
+    let (tx, mut rx) = trpl::channel();
+    let tx_fut = async move {
+        let vals = vec![
+            String::from("hi"),
+            String::from("from"),
+            String::from("the"),
+            String::from("future"),
+        ];
+
+        for val in vals {
+          tx.send(val).unwrap();
+          trpl::sleep(Duration::from_millis(500)).await;
+        }
+      };
+
+    let rx_fut = async {
+        while let Some(value) = rx.recv().await {
+          println!("received '{value}'");
+        }
+      };
+
+    trpl::join(tx_fut, rx_fut).await;
+  });
+
+  block_on(async {
+    println!("-- Joining multiple sender futures and a receiver future --");
+    let (tx, mut rx) = trpl::channel();
+
+    let tx1 = tx.clone();
+    let tx1_fut = async move {
+      let vals = vec![
+        String::from("hi"),
+        String::from("from"),
+        String::from("the"),
+        String::from("future"),
+      ];
+
+      for val in vals {
+        tx1.send(val).unwrap();
+        trpl::sleep(Duration::from_millis(500)).await;
+      }
+    };
+
+    let rx_fut = async {
+      while let Some(value) = rx.recv().await {
+        println!("received '{value}'");
+      }
+    };
+
+    let tx_fut = async move {
+      let vals = vec![
+        String::from("more"),
+        String::from("messages"),
+        String::from("for"),
+        String::from("you"),
+      ];
+
+      for val in vals {
+        tx.send(val).unwrap();
+        trpl::sleep(Duration::from_millis(1500)).await;
+      }
+    };
+
+    trpl::join!(tx1_fut, tx_fut, rx_fut);
+  })
+}
+
 pub fn run() {
   // countdown_and_add_one(5);
   // print_page_title();
@@ -180,5 +321,7 @@ pub fn run() {
   // count_numbers_with_join();
   // count_numbers_no_async_blocks();
   // count_numbers_await_immediately();
-  count_numbers_partial_async();
+  // count_numbers_partial_async();
+  // message_passing_without_async_blocks();
+  message_passing();
 }

@@ -2,6 +2,9 @@
 #![allow(unused_assignments)]
 
 mod cell;
+mod future;
+
 fn main() {
-    cell::run();
+    // cell::run();
+    future::run();
 }

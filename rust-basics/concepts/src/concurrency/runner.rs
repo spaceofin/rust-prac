@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 #![allow(unused_assignments)]
 
+mod trpl;
+
 fn main() {
-    println!("concurrency binary");
+    trpl::run();
 }

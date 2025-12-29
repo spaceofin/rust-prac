@@ -6,6 +6,7 @@ default-run = "concurrency"
 
 [dependencies]
 futures = "0.3.31"
+trpl = "0.3.0"
 
 [[bin]]
 name = "core"

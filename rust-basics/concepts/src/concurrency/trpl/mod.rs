@@ -1,5 +1,5 @@
-mod async_join;
+mod async_await_flow;
 
 pub fn run() {
-    async_join::run();
+    async_await_flow::run();
 }

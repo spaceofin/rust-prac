@@ -1,6 +1,7 @@
 use std::thread;
 use std::time::Duration;
-use trpl::{Html, block_on, spawn_task, sleep, join, select, yield_now};
+use std::future::Future;
+use trpl::{Html, block_on, spawn_task, sleep, join, select, yield_now, Either};
 
 async fn wait_and_add_one(x: i32) -> i32 {
   for i in (1..=3).rev() {
@@ -402,6 +403,62 @@ fn interleaved_async_with_yield() {
   });
 }
 
+async fn timeout<F: Future>(future_to_try: F, max_time: Duration) -> Result<F::Output, Duration>
+{
+  match select(future_to_try, sleep(max_time)).await {
+    Either::Left(output) => Ok(output),
+    Either::Right(_) => Err(max_time),
+  }
+}
+
+fn await_with_timeout() {
+  block_on(async {
+    let slow = async {
+      sleep(Duration::from_secs(5)).await;
+      "Finally finished"
+    };
+
+    match timeout(slow, Duration::from_secs(2)).await {
+        Ok(message) => println!("Succeeded with '{message}'"),
+        Err(duration) => {
+            println!("Failed after {} seconds", duration.as_secs())
+        }
+    }
+  })
+}
+
+async fn retry<F, Fut>(mut f: F, max_attempts: usize) -> Result<usize, ()>
+where
+  F: Fn() -> Fut,
+  Fut: Future<Output = bool>,  {
+    for attempt_num in 1..=max_attempts {
+      if f().await {
+        return Ok(attempt_num);
+      }
+    }
+    Err(())
+}
+
+fn run_with_retry() {
+  use rand::Rng;
+  block_on(async {
+    let attempt = || async {
+      sleep(Duration::from_millis(200)).await;
+      rand::thread_rng().gen_bool(0.3)
+    };
+
+    let max_attempts = 5;
+    match retry(attempt, max_attempts).await {
+      Ok(attempt_num) => {
+        println!("Succeeded on attempt #{attempt_num}");
+      }
+      Err(_) => {
+        println!("Failed after {max_attempts} attempts");
+      }
+    }
+  })
+}
+
 pub fn run() {
   // countdown_and_add_one(5);
   // print_page_title();
@@ -417,5 +474,7 @@ pub fn run() {
   // message_passing();
   // select_asnyc();
   // interleaved_async_with_sleep();
-  interleaved_async_with_yield();
+  // interleaved_async_with_yield();
+  // await_with_timeout();
+  run_with_retry();
 }

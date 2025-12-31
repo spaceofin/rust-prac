@@ -1,6 +1,6 @@
 use std::thread;
 use std::time::Duration;
-use trpl::{Html, block_on, spawn_task, sleep, join};
+use trpl::{Html, block_on, spawn_task, sleep, join, select, yield_now};
 
 async fn wait_and_add_one(x: i32) -> i32 {
   for i in (1..=3).rev() {
@@ -197,7 +197,7 @@ fn message_passing_without_async_blocks() {
 
     for val in vals {
         tx.send(val).unwrap();
-        trpl::sleep(Duration::from_millis(500)).await;
+        sleep(Duration::from_millis(500)).await;
     }
 
     for _ in 0..vals_len {
@@ -219,7 +219,7 @@ fn message_passing_without_async_blocks() {
 
     for val in vals {
         tx.send(val).unwrap();
-        trpl::sleep(Duration::from_millis(500)).await;
+        sleep(Duration::from_millis(500)).await;
     }
 
     drop(tx);
@@ -255,7 +255,7 @@ fn message_passing() {
 
         for val in vals {
           tx.send(val).unwrap();
-          trpl::sleep(Duration::from_millis(500)).await;
+          sleep(Duration::from_millis(500)).await;
         }
       };
 
@@ -283,7 +283,7 @@ fn message_passing() {
 
       for val in vals {
         tx1.send(val).unwrap();
-        trpl::sleep(Duration::from_millis(500)).await;
+        sleep(Duration::from_millis(500)).await;
       }
     };
 
@@ -303,12 +303,103 @@ fn message_passing() {
 
       for val in vals {
         tx.send(val).unwrap();
-        trpl::sleep(Duration::from_millis(1500)).await;
+        sleep(Duration::from_millis(1500)).await;
       }
     };
 
     trpl::join!(tx1_fut, tx_fut, rx_fut);
   })
+}
+
+fn slow(name: &str, ms: u64) {
+    thread::sleep(Duration::from_millis(ms));
+    println!("'{name}' ran for {ms}ms");
+}
+
+fn select_asnyc() {
+  block_on(async{
+    let a = async {
+        println!("'a' started.");
+        slow("a", 30);
+        slow("a", 10);
+        slow("a", 20);
+        sleep(Duration::from_millis(50)).await;
+        println!("'a' finished.");
+    };
+
+    let b = async {
+        println!("'b' started.");
+        slow("b", 75);
+        slow("b", 10);
+        slow("b", 15);
+        slow("b", 350);
+        sleep(Duration::from_millis(50)).await;
+        println!("'b' finished.");
+    };
+    select(a, b).await;
+  })
+}
+
+fn interleaved_async_with_sleep() {
+  block_on(async {
+      let one_ms = Duration::from_millis(1);
+
+      let a = async {
+          println!("'a' started.");
+          slow("a", 30);
+          sleep(one_ms).await;
+          slow("a", 10);
+          sleep(one_ms).await;
+          slow("a", 20);
+          sleep(one_ms).await;
+          println!("'a' finished.");
+      };
+
+      let b = async {
+          println!("'b' started.");
+          slow("b", 75);
+          sleep(one_ms).await;
+          slow("b", 10);
+          sleep(one_ms).await;
+          slow("b", 15);
+          sleep(one_ms).await;
+          slow("b", 350);
+          sleep(one_ms).await;
+          println!("'b' finished.");
+      };
+      select(a, b).await;
+  });
+}
+
+fn interleaved_async_with_yield() {
+  block_on(async {
+      let one_ms = Duration::from_millis(1);
+
+      let a = async {
+          println!("'a' started.");
+          slow("a", 30);
+          yield_now().await;
+          slow("a", 10);
+          yield_now().await;
+          slow("a", 20);
+          yield_now().await;
+          println!("'a' finished.");
+      };
+
+      let b = async {
+          println!("'b' started.");
+          slow("b", 75);
+          yield_now().await;
+          slow("b", 10);
+          yield_now().await;
+          slow("b", 15);
+          yield_now().await;
+          slow("b", 350);
+          yield_now().await;
+          println!("'b' finished.");
+      };
+      select(a, b).await;
+  });
 }
 
 pub fn run() {
@@ -323,5 +414,8 @@ pub fn run() {
   // count_numbers_await_immediately();
   // count_numbers_partial_async();
   // message_passing_without_async_blocks();
-  message_passing();
+  // message_passing();
+  // select_asnyc();
+  // interleaved_async_with_sleep();
+  interleaved_async_with_yield();
 }

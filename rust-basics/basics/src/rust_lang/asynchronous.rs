@@ -459,6 +459,36 @@ fn run_with_retry() {
   })
 }
 
+use trpl::{StreamExt, stream_from_iter};
+
+fn stream_basic() {
+  block_on(async {
+    let values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let iter = values.iter().map(|n| n * 2);
+    let mut stream = stream_from_iter(iter);
+
+    while let Some(value) = stream.next().await {
+        println!("The value was: {value}");
+    }
+  })
+}
+
+fn stream_of_futures() {
+    block_on(async {
+        let future_iter = (1..=10).map(|n| async move {
+            sleep(Duration::from_millis(500)).await;
+            n * 2
+        });
+
+        let mut stream = stream_from_iter(future_iter);
+
+        while let Some(fut) = stream.next().await {
+          let value = fut.await;
+          println!("got: {value}");
+        }
+    });
+}
+
 pub fn run() {
   // countdown_and_add_one(5);
   // print_page_title();
@@ -476,5 +506,7 @@ pub fn run() {
   // interleaved_async_with_sleep();
   // interleaved_async_with_yield();
   // await_with_timeout();
-  run_with_retry();
+  // run_with_retry();
+  // stream_basic();
+  stream_of_futures();
 }

@@ -2,7 +2,9 @@
 #![allow(unused_assignments)]
 
 mod trpl;
+mod manual_future;
 
 fn main() {
-    trpl::run();
+    // trpl::run();
+    manual_future::run();
 }

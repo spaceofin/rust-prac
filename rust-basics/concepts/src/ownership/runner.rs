@@ -3,7 +3,9 @@
 #![allow(unused_variables)]
 
 mod rc;
+mod arc;
 
 fn main() {
-    rc::run();
+    // rc::run();
+    arc::run();
 }

@@ -2,7 +2,7 @@
 name = "concepts"
 version = "0.1.0"
 edition = "2024"
-default-run = "ownership"
+default-run = "memory"
 
 [dependencies]
 futures = "0.3.31"
@@ -19,3 +19,7 @@ path = "src/concurrency/runner.rs"
 [[bin]]
 name = "ownership"
 path = "src/ownership/runner.rs"
+
+[[bin]]
+name = "memory"
+path = "src/memory/runner.rs"

@@ -16,6 +16,7 @@ mod io;
 mod iterators;
 mod json_io;
 mod lifetimes;
+mod oop;
 mod ownership;
 mod pattern_matching;
 mod smart_pointers;
@@ -24,7 +25,7 @@ mod todo;
 mod traits;
 
 fn main() {
-  asynchronous::run();
+  // asynchronous::run();
 // closures::run();
 // collections::run();
 // common_concepts::run();
@@ -36,6 +37,7 @@ fn main() {
 // iterators::run();
 // json_io::run();
 // lifetimes::run();
+oop::run();
 // ownership::run();
 // smart_pointers::run();
 // pattern_matching::run();

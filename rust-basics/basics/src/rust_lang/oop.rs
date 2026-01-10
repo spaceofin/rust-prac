@@ -61,6 +61,91 @@ fn encapsulation_example() {
     println!("collection: {collection:?}");
 }
 
+mod gui {
+    pub trait Draw {
+        fn draw(&self);
+    }
+
+    pub struct Screen {
+        // Trait objects are created by specifying a pointer, such as a reference
+        // or a Box<T> smart pointer, followed by the 'dyn' keyword and the trait name.
+        pub components: Vec<Box<dyn Draw>>,
+    }
+
+    impl Screen {
+        pub fn run(&self) {
+            for component in self.components.iter() {
+                component.draw();
+            }
+        }
+    }
+
+    pub struct Button {
+        pub width: u32,
+        pub height: u32,
+        pub label: String,
+    }
+
+    impl Draw for Button {
+        fn draw(&self) {
+            println!(
+                "Drawing Button (width: {}, height: {}, label: {:?})",
+                self.width, self.height, self.label
+            );
+            // code to actually draw a button
+        }
+    }
+}
+
+
+fn trait_objects_example() {
+    use gui::{Button, Screen, Draw};
+
+    struct SelectBox {
+        width: u32,
+        height: u32,
+        options: Vec<String>,
+    }
+
+    impl Draw for SelectBox {
+        fn draw(&self) {
+            println!(
+                "Drawing SelectBox (width: {}, height: {}, options: {:?})",
+                self.width, self.height, self.options
+            );
+            // code to actually draw a select box
+        }
+    }
+
+    let screen = Screen {
+        components: vec![
+            Box::new(SelectBox {
+                width: 75,
+                height: 10,
+                options: vec![
+                    String::from("Yes"),
+                    String::from("Maybe"),
+                    String::from("No"),
+                ],
+            }),
+            Box::new(Button {
+                width: 50,
+                height: 10,
+                label: String::from("OK"),
+            }),
+        ],
+    };
+    screen.run();
+
+    // Compile Error: the trait bound `String: Draw` is not satisfied.
+    // let screen = Screen {
+    //     components: vec![Box::new(String::from("Hi"))],
+    // };
+    // screen.run();
+}
+
+
 pub fn run() {
-    encapsulation_example();
+    // encapsulation_example();
+    trait_objects_example();
 }

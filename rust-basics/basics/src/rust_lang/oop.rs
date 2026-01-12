@@ -219,8 +219,73 @@ fn generics_example() {
     screen2.run();
 }
 
+mod blog {
+    enum State {
+        Draft,
+        Review,
+        Published
+    }
+    pub struct Post {
+        state: State,
+        draft_content: String,
+        content: String
+    }
+
+    impl Post {
+        pub fn new() -> Self {
+            Self {
+                state: State::Draft,
+                draft_content: String::new(),
+                content: String::new(),
+            }
+        }
+
+        pub fn add_text(&mut self, text: &str) {
+            self.draft_content = text.to_string();
+        }
+
+        pub fn request_review(&mut self) {
+            match self.state {
+                State::Draft if !self.draft_content.is_empty() => {
+                    self.state = State::Review;
+                },
+                _ => {}
+            }
+        }
+
+        pub fn approve(&mut self) {
+            if let State::Review = self.state {
+                self.content = self.draft_content.clone();
+                self.draft_content.clear();
+                self.state = State::Published;
+            }
+        }
+
+        pub fn content(&self) -> &str {
+            &self.content
+        }
+    }
+}
+
+
+fn oop_pattern_example() {
+    use blog::Post;
+
+    let mut post = Post::new();
+
+    post.add_text("I ate a salad for lunch today");
+    assert_eq!("", post.content());
+
+    post.request_review();
+    assert_eq!("", post.content());
+
+    post.approve();
+    assert_eq!("I ate a salad for lunch today", post.content());
+}
+
 pub fn run() {
     // encapsulation_example();
     // trait_objects_example();
-    generics_example();
+    // generics_example();
+    oop_pattern_example();
 }   

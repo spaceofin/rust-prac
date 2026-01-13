@@ -219,52 +219,137 @@ fn generics_example() {
     screen2.run();
 }
 
+// mod blog {
+//     enum State {
+//         Draft,
+//         Review,
+//         Published
+//     }
+//     pub struct Post {
+//         state: State,
+//         draft_content: String,
+//         content: String
+//     }
+
+//     impl Post {
+//         pub fn new() -> Self {
+//             Self {
+//                 state: State::Draft,
+//                 draft_content: String::new(),
+//                 content: String::new(),
+//             }
+//         }
+
+//         pub fn add_text(&mut self, text: &str) {
+//             self.draft_content = text.to_string();
+//         }
+
+//         pub fn request_review(&mut self) {
+//             match self.state {
+//                 State::Draft if !self.draft_content.is_empty() => {
+//                     self.state = State::Review;
+//                 },
+//                 _ => {}
+//             }
+//         }
+
+//         pub fn approve(&mut self) {
+//             if let State::Review = self.state {
+//                 self.content = self.draft_content.clone();
+//                 self.draft_content.clear();
+//                 self.state = State::Published;
+//             }
+//         }
+
+//         pub fn content(&self) -> &str {
+//             &self.content
+//         }
+//     }
+// }
+
 mod blog {
-    enum State {
-        Draft,
-        Review,
-        Published
-    }
     pub struct Post {
-        state: State,
-        draft_content: String,
-        content: String
+        state: Option<Box<dyn State>>,
+        content: String,
     }
 
     impl Post {
-        pub fn new() -> Self {
-            Self {
-                state: State::Draft,
-                draft_content: String::new(),
+        pub fn new() -> Post {
+            Post {
+                state: Some(Box::new(Draft {})),
                 content: String::new(),
             }
         }
-
+        
         pub fn add_text(&mut self, text: &str) {
-            self.draft_content = text.to_string();
+            self.content.push_str(text);
+        }
+
+        pub fn content(&self) -> &str {
+            self.state.as_ref().unwrap().content(self)
         }
 
         pub fn request_review(&mut self) {
-            match self.state {
-                State::Draft if !self.draft_content.is_empty() => {
-                    self.state = State::Review;
-                },
-                _ => {}
+            if let Some(s) = self.state.take() {
+                self.state = Some(s.request_review())
             }
         }
 
         pub fn approve(&mut self) {
-            if let State::Review = self.state {
-                self.content = self.draft_content.clone();
-                self.draft_content.clear();
-                self.state = State::Published;
+            if let Some(s) = self.state.take() {
+                self.state = Some(s.approve())
             }
         }
+    }
 
-        pub fn content(&self) -> &str {
-            &self.content
+    trait State {
+        fn request_review(self: Box<Self>) -> Box<dyn State>;
+        fn approve(self: Box<Self>) -> Box<dyn State>;
+        fn content<'a>(&self, post: &'a Post) -> &'a str {
+            ""
         }
     }
+
+    struct Draft {}
+
+    impl State for Draft {
+        fn request_review(self: Box<Self>) -> Box<dyn State> {
+            Box::new(PendingReview {})
+        }
+
+        fn approve(self: Box<Self>) -> Box<dyn State> {
+            self
+        }
+    }
+
+    struct PendingReview {}
+
+    impl State for PendingReview {
+        fn request_review(self: Box<Self>) -> Box<dyn State> {
+            self
+        }
+
+        fn approve(self: Box<Self>) -> Box<dyn State> {
+            Box::new(Published {})
+        }
+    }
+
+    struct Published {}
+
+    impl State for Published {
+        fn request_review(self: Box<Self>) -> Box<dyn State> {
+            self
+        }
+
+        fn approve(self: Box<Self>) -> Box<dyn State> {
+            self
+        }
+
+        fn content<'a>(&self, post: &'a Post) -> &'a str {
+            &post.content
+        }
+    }
+
 }
 
 

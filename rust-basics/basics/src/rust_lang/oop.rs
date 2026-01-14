@@ -352,6 +352,56 @@ mod blog {
 
 }
 
+mod blog_typestate {
+    #[derive(Debug)]
+    pub struct Post {
+        content: String,
+    }
+
+    #[derive(Debug)]
+    pub struct DraftPost {
+        content: String,
+    }
+
+    impl Post {
+        pub fn new() -> DraftPost {
+            DraftPost { 
+                content: String::new(),
+            }
+        }
+        
+        pub fn content(&self) -> &str {
+            &self.content
+        }
+    }
+
+    impl DraftPost {
+        pub fn add_text(&mut self, text: &str) {
+            self.content.push_str(text);
+        }
+
+        pub fn request_review(self) -> PendingReviewPost {
+            PendingReviewPost {
+                content: self.content,
+            }
+        }
+    }
+
+    #[derive(Debug)]
+    pub struct PendingReviewPost {
+        content: String,
+    }
+
+    impl PendingReviewPost {
+        pub fn approve(self) -> Post {
+            // The ownership of `self.content` is moved into the new `Post` instance.
+            Post {
+                content: self.content,
+            }
+        }
+    }
+
+}
 
 fn oop_pattern_example() {
     use blog::Post;
@@ -368,9 +418,29 @@ fn oop_pattern_example() {
     assert_eq!("I ate a salad for lunch today", post.content());
 }
 
+fn typestate_pattern_example() {
+    use blog_typestate::Post;
+
+    let mut post = Post::new();
+    println!("{post:?}");
+
+    post.add_text("I ate a salad for lunch today");
+    // Compile Error: no method named `content` found for struct `DraftPost`
+    // assert_eq!("", post.content());
+    println!("{post:?}");
+
+    let post = post.request_review();
+    println!("{post:?}");
+    let post = post.approve();
+    println!("{post:?}");
+
+    assert_eq!("I ate a salad for lunch today", post.content());
+}
+
 pub fn run() {
     // encapsulation_example();
     // trait_objects_example();
     // generics_example();
-    oop_pattern_example();
+    // oop_pattern_example();
+    typestate_pattern_example();
 }   

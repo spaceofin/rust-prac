@@ -489,6 +489,45 @@ fn stream_of_futures() {
     });
 }
 
+fn multi_thread_and_multi_task_demo() {
+  let (tx, mut rx) = trpl::channel();
+  let tx_clone = tx.clone();
+
+  // Child Thread
+  thread::spawn(move || {
+    for i in 1..=5 {
+      tx.send(i).unwrap();
+      thread::sleep(Duration::from_millis(500));
+    }
+  });
+
+  // Child Thread
+  thread::spawn(move || {
+    for i in 1..=3 {
+      tx_clone.send(i*100).unwrap();
+      thread::sleep(Duration::from_secs(1));
+    }
+  });
+
+  // Multi-task in Parent Thread
+  trpl::block_on(async {
+    let receiver_task = async {
+      while let Some(message) = rx.recv().await {
+        println!("Received: {message}");
+      }
+    };
+
+    let background_task = async {
+      for _ in 0..15 {
+        sleep(Duration::from_millis(200)).await;
+        println!("background task running...");
+      }
+    };
+
+    trpl::join(receiver_task, background_task).await;
+  });
+}
+
 pub fn run() {
   // countdown_and_add_one(5);
   // print_page_title();
@@ -508,5 +547,6 @@ pub fn run() {
   // await_with_timeout();
   // run_with_retry();
   // stream_basic();
-  stream_of_futures();
+  // stream_of_futures();
+  multi_thread_and_multi_task_demo();
 }

@@ -25,7 +25,7 @@ mod todo;
 mod traits;
 
 fn main() {
-  // asynchronous::run();
+asynchronous::run();
 // closures::run();
 // collections::run();
 // common_concepts::run();
@@ -37,7 +37,7 @@ fn main() {
 // iterators::run();
 // json_io::run();
 // lifetimes::run();
-oop::run();
+// oop::run();
 // ownership::run();
 // smart_pointers::run();
 // pattern_matching::run();

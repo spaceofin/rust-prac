@@ -10,6 +10,7 @@ mod collections;
 mod common_concepts;
 mod concurrency;
 mod enums;
+mod error_handling;
 mod generics;
 mod guessing_game;
 mod io;
@@ -25,12 +26,13 @@ mod todo;
 mod traits;
 
 fn main() {
-asynchronous::run();
+// asynchronous::run();
 // closures::run();
 // collections::run();
 // common_concepts::run();
 // concurrency::run();
 // enums::run();
+error_handling::run();
 // generics::run();
 // guessing_game::run();
 // io::run();

@@ -33,3 +33,17 @@ pub mod parent {
         // child::subchild::sub_child_fn(); // `subchild` is private and not accessible from its parent module
     }
 }
+
+pub mod public {
+    pub fn public_fn() {
+        println!("__public_fn called__");
+    }
+}
+
+// re-export
+pub use restaurant::eat_at_restaurant;
+pub use parent::{parent_fn, parent_public};
+pub use public::public_fn;
+
+// Compile Error: Private items can't re-export
+// pub use parent::{parent_private, child};

@@ -4,5 +4,6 @@ members = [
     "basics",
     "concepts",
     "utils",
-    "basics/src/rust_lang/packages_crates_modules"
+    "basics/src/rust_lang/packages_crates_modules",
+    "basics/src/rust_lang/automated_tests"
 ]

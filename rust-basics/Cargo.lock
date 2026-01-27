@@ -3,6 +3,13 @@
 version = 4
 
 [[package]]
+name = "adder"
+version = "0.1.0"
+dependencies = [
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "ahash"
 version = "0.8.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -738,6 +745,10 @@ dependencies = [
 [[package]]
 name = "my_crate"
 version = "0.1.0"
+dependencies = [
+ "adder",
+ "rand 0.8.5",
+]
 
 [[package]]
 name = "new_debug_unreachable"

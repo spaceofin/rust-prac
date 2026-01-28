@@ -47,8 +47,55 @@ fn unsafe_code() {
     assert_eq!(b, &mut [4, 5, 6]);
 }
 
+unsafe extern "C" {
+    // functions known to be safe to call can be marked `safe`.
+   safe fn abs(input: i32) -> i32;
+}
+
+fn extern_example() {
+    // No `unsafe` block is needed because `abs` is marked as `safe`.
+    // unsafe {
+    //     println!("Absolute value of -3 according to C: {}", abs(-3));
+    // }
+
+    println!("Absolute value of -3 according to C: {}", abs(-3));
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn call_from_c() {
+    println!("Just called a Rust function from C!");
+}
+
+// In Rust, global variables are called static variables.
+static HELLO_WORLD: &str = "Hello, world!";
+
+/// SAFETY: Calling this from more than a single thread at a time is undefined
+/// behavior, so you *must* guarantee you only call it from a single thread at
+/// a time.
+unsafe fn add_to_count(inc: u32) {
+    unsafe {
+        COUNTER += inc;
+    }
+}
+
+// static variables can be mutable.
+static mut COUNTER: u32 = 0;
+
+fn global_variables() {
+    println!("value is: {HELLO_WORLD}");
+
+    unsafe {
+        // SAFETY: This is only called from a single thread in `main`.
+        println!("COUNTER: {}", *(&raw const COUNTER));
+        add_to_count(3);
+        println!("COUNTER: {}", *(&raw const COUNTER));
+    }
+}
 
 pub fn run() {
     // raw_pointers();
-    unsafe_code();
+    // unsafe_code();
+    // extern_example();
+    // call_from_c();
+    global_variables();
 }

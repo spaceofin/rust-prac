@@ -4,6 +4,7 @@
 #![allow(unused_mut)]
 #![allow(unused_assignments)]
 
+mod advanced_features;
 mod asynchronous;
 mod closures;
 mod collections;
@@ -26,13 +27,14 @@ mod todo;
 mod traits;
 
 fn main() {
+advanced_features::run();
 // asynchronous::run();
 // closures::run();
 // collections::run();
 // common_concepts::run();
 // concurrency::run();
 // enums::run();
-error_handling::run();
+// error_handling::run();
 // generics::run();
 // guessing_game::run();
 // io::run();

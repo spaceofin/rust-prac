@@ -92,10 +92,56 @@ fn global_variables() {
     }
 }
 
+trait Producer {
+    type Output;
+
+    fn produce(&self) -> Self::Output;
+}
+
+
+trait ProducerOf<T> {
+    fn produce(&self) -> T;
+}
+
+#[derive(Debug)]
+struct Counter;
+
+impl Producer for Counter {
+    type Output = u32;
+
+    fn produce(&self) -> Self::Output {
+        1
+    }
+}
+
+impl ProducerOf<u32> for Counter {
+    fn produce(&self) -> u32 {
+        2
+    }
+}
+
+impl ProducerOf<String> for Counter {
+    fn produce(&self) -> String {
+        "hello".to_string()
+    }
+}
+
+fn associated_types_demo() {
+    let counter = Counter;
+    let product1 = <Counter as Producer>::produce(&counter);
+    let product2 = <Counter as ProducerOf<u32>>::produce(&counter);
+    let product3 = <Counter as ProducerOf<String>>::produce(&counter);
+
+    println!("product1: {product1:?}");
+    println!("product2: {product2:?}");
+    println!("product3: {product3:?}");
+}
+
 pub fn run() {
     // raw_pointers();
     // unsafe_code();
     // extern_example();
     // call_from_c();
-    global_variables();
+    // global_variables();
+    associated_types_demo();
 }

@@ -137,11 +137,98 @@ fn associated_types_demo() {
     println!("product3: {product3:?}");
 }
 
+use std::ops::Add;
+
+// Default type parameter: `Rhs = Self` provides a default right-hand-side type, avoiding extra generic boilerplate in most cases.
+// trait Add<Rhs=Self> {
+//     type Output;
+
+//     fn add(self, rhs: Rhs) -> Self::Output;
+// }
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+impl Add for Point {
+    // associated type
+    type Output = Point;
+
+    fn add(self, other: Point) -> Point {
+        Point {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+// newtype pattern
+#[derive(Debug, PartialEq)]
+struct Millimeters(u32);
+#[derive(Debug, PartialEq)]
+struct Meters(u32);
+
+// Overrides the default type parameter (`Rhs = Self`) to add `Meters` to `Millimeters`.
+impl Add<Meters> for Millimeters {
+    type Output = Millimeters;
+
+    fn add(self, other: Meters) -> Millimeters {
+        Millimeters(self.0 + (other.0 * 1000))
+    }
+}
+
+impl Add for Meters {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self(self.0 + other.0)
+    }
+}
+
+// <T = String>: default generic parameter
+trait Greet<T = String> {
+    fn greet(&self) -> T;
+}
+
+struct HelloBot {}
+
+impl Greet for HelloBot {
+    fn greet(&self) -> String {
+        "hello".to_string()
+    }
+}
+
+fn operator_overloading() {
+    assert_eq!(
+        Point { x: 1, y: 0 } + Point { x: 2, y: 3 },
+        Point { x: 3, y: 3 }
+    );
+
+    assert_eq!(
+        Millimeters(1000) + Meters(2),
+        Millimeters(3000)
+    );
+
+    assert_eq!(
+        Meters(1) + Meters(2),
+        Meters(3)
+    );
+
+    let hello_bot = HelloBot {};
+    println!("HelloBot say: {}", hello_bot.greet());
+
+    // Compile Error: `Add<Millimeters> for Millimeters` is not implemented
+    // let _ = Millimeters(1000) + Millimeters(2000);
+}
+
 pub fn run() {
     // raw_pointers();
     // unsafe_code();
     // extern_example();
     // call_from_c();
     // global_variables();
-    associated_types_demo();
+    // associated_types_demo();
+    operator_overloading();
 }

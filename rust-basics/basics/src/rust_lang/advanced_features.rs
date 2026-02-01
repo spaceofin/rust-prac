@@ -292,6 +292,66 @@ fn identically_named_methods() {
     println!("A baby cat is called a {}", <Cat as Animal>::baby_name());
 }
 
+use std::fmt;
+
+// Display is a supertrait of OutlinePrint, so any type implementing OutlinePrint must also implement Display.
+trait OutlinePrint: fmt::Display {
+    fn outline_print(&self) {
+        let output = self.to_string();
+        let len = output.len();
+        println!("{}", "*".repeat(len + 4));
+        println!("*{}*", " ".repeat(len + 2));
+        println!("* {output} *");
+        println!("*{}*", " ".repeat(len + 2));
+        println!("{}", "*".repeat(len + 4));
+    }
+}
+struct Coordinates {
+    x: i32,
+    y: i32,
+}
+
+impl OutlinePrint for Coordinates {}
+
+impl fmt::Display for Coordinates {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+fn supertraits() {
+    let coord = Coordinates { x: 1, y: 2 };
+    println!("Coorinate: {coord}");
+    coord.outline_print();
+}
+
+struct Wrapper(Vec<String>);
+
+impl fmt::Display for Wrapper {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "[{}]", self.0.join(", "))
+    }
+}
+
+use std::ops::Deref;
+
+impl Deref for Wrapper {
+    type Target = Vec<String>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn newtype_pattern() {
+    let w = Wrapper(vec![String::from("hello"), String::from("world")]);
+    println!("w = {w}");
+    println!("len = {}", w.len());
+    println!("is_empty = {}", w.is_empty());
+
+    for s in w.iter() {
+        println!("{s}");
+    }
+}
 
 pub fn run() {
     // raw_pointers();
@@ -301,5 +361,7 @@ pub fn run() {
     // global_variables();
     // associated_types_demo();
     // operator_overloading();
-    identically_named_methods();
+    // identically_named_methods();
+    // supertraits();
+    newtype_pattern();
 }

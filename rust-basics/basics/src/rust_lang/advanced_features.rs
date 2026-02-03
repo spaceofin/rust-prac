@@ -422,6 +422,67 @@ fn type_aliases() -> Result<()> {
     Ok(())
 }
 
+// Compile Error: expected `!`, found `()`.
+// fn bar() -> ! {
+//     let num = 10;
+// }
+
+// This function never returns;
+// its return type `!` is the never type.
+fn crash() -> ! {
+    panic!("error");
+}
+
+fn never_type() {
+    let nums = vec!["10", "hello", "20"];
+
+    for s in nums {
+        let n: u32 = match s.parse() {
+            Ok(num) => num,
+            Err(_) => continue, // `continue` is of the never type `!`
+        };
+        print!("{n} ");
+    }
+    println!();
+
+    let vals = vec![Some(10), Some(20), Some(30)];
+
+    for v in vals {
+        let val = match v {
+            Some(x) => x,
+            // `panic!` is of the never type `!`
+            None => panic!("Expected a value, but found None"),
+        };
+        print!("{val} ");
+    }
+    println!();
+}
+
+// The generic type parameter `T` implicitly implements the `Sized` trait
+fn generic_sized<T>(t: T) {
+    println!("Called generic_sized with a value!");
+}
+
+// The generic type parameter `T` may be unsized when using the `?Sized` trait bound
+fn generic_unsized<T: ?Sized>(t: &T) {
+    println!("Called generic_unsized with a reference!");
+}
+
+fn dst() {
+    // Compile Error: doesn't have a size known at compile-time.
+    // let s1: str = "Hello there!";
+    // let s2: str = "How's it going?";
+
+    let a = String::from("hi");
+    let b = String::from("hello");
+    let c= "world";
+    
+    generic_sized(a);
+    generic_sized(c);
+    generic_unsized(&b);
+    generic_unsized(c);
+}
+
 pub fn run() {
     // raw_pointers();
     // unsafe_code();
@@ -433,7 +494,8 @@ pub fn run() {
     // identically_named_methods();
     // supertraits();
     // newtype_pattern();
-    synonyms();
-    type_aliases().unwrap();
-
+    // synonyms();
+    // type_aliases().unwrap();
+    // never_type();
+    dst();
 }

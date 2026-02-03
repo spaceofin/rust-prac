@@ -353,6 +353,75 @@ fn newtype_pattern() {
     }
 }
 
+fn synonyms() {
+    type Kilometers = i32;
+
+    let x: i32 = 5;
+    let y: Kilometers = 5;
+
+    println!("x + y = {}", x + y);
+
+    type Thunk = Box<dyn Fn() + Send + 'static>;
+
+    let f: Thunk = Box::new(|| println!("hi"));
+
+    fn takes_long_type(f: Thunk) {
+        f()
+    }
+
+    fn returns_long_type() -> Thunk {
+        Box::new(|| println!("hello"))
+    }
+
+    takes_long_type(f);
+    let thunk = returns_long_type();
+    thunk();
+}
+
+type Result<T> = std::result::Result<T, std::io::Error>;
+
+trait Write {
+    fn write(&mut self, buf: &[u8]) -> Result<usize>;
+    fn flush(&mut self) -> Result<()>;
+}
+
+#[derive(Debug)]
+struct BufferWriter {
+    buffer: Vec<u8>,
+}
+
+impl BufferWriter {
+    fn new() -> Self {
+        Self {
+            buffer: Vec::new(),
+        }
+    }
+}
+
+impl Write for BufferWriter {
+    fn write(&mut self, buf: &[u8]) -> Result<usize> {
+        self.buffer.extend_from_slice(buf);
+        Ok(buf.len())
+    }
+    fn flush(&mut self) -> Result<()> {
+        Ok(())
+    }
+}
+
+fn type_aliases() -> Result<()> {
+    let mut writer = BufferWriter::new();
+    let len1 = writer.write(b"hello ")?;
+    let len2 = writer.write(b"world")?;
+    println!("len1: {len1}, len2: {len2}");
+
+    println!("writer: {writer:?}");
+    writer.flush()?;
+
+    println!("writer: {writer:?}");
+
+    Ok(())
+}
+
 pub fn run() {
     // raw_pointers();
     // unsafe_code();
@@ -363,5 +432,8 @@ pub fn run() {
     // operator_overloading();
     // identically_named_methods();
     // supertraits();
-    newtype_pattern();
+    // newtype_pattern();
+    synonyms();
+    type_aliases().unwrap();
+
 }

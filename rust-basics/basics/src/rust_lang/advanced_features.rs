@@ -483,6 +483,72 @@ fn dst() {
     generic_unsized(c);
 }
 
+fn add_one(x: i32) -> i32 {
+    x + 1
+}
+
+fn do_twice(f: fn(i32) -> i32, arg: i32) -> i32 {
+    f(arg) + f(arg)
+}
+
+#[derive(Debug)]
+enum Status {
+    Value(u32),
+    Stop,
+}
+
+fn function_pointers() {
+    let answer = do_twice(add_one, 5);
+    println!("The answer is: {answer}");
+
+    let list_of_numbers = vec![1, 2, 3];
+    let list_of_strings: Vec<String> = list_of_numbers.iter().map(ToString::to_string).collect();
+    println!("list of strings: {list_of_strings:?}");
+
+    let list_of_statuses: Vec<Status> = (0u32..20).map(Status::Value).collect();
+    let list_of_statuses_c: Vec<Status> = (0u32..20).map(|v| Status::Value(v)).collect();
+    println!("list of statuses: {list_of_statuses:?}");
+    println!("list of statuses(closure): {list_of_statuses_c:?}");
+}
+
+fn returns_closure() -> impl Fn(i32) -> i32 {
+    |x| x + 1
+}
+
+fn returns_initialized_closure(init: i32) -> impl Fn(i32) -> i32 {
+    move |x| x + init
+}
+
+fn returns_boxed_closure() -> Box<dyn Fn(i32) -> i32> {
+    Box::new(|x| x + 1)
+}
+
+fn returns_boxed_initialized_closure(init: i32) -> Box<dyn Fn(i32) -> i32> {
+    Box::new(move |x| x + init)
+}
+
+
+fn returning_closures() {
+    let boxed_handlers: Vec<Box<dyn Fn(i32) -> i32>> = vec![Box::new(returns_closure()), Box::new(returns_initialized_closure(123))];
+
+    // Compile Error: expected opaque type, found a different opaque type
+    // let handlers = vec![returns_closure(), returns_initialized_closure(123)];
+
+    let handlers = vec![returns_boxed_closure(), returns_boxed_initialized_closure(123)];
+    
+    print!("\nboxed handlers: ");
+    for handler in boxed_handlers {
+        let output = handler(5);
+        print!("{output} ");
+    }
+
+    print!("\nhandlers: ");
+    for handler in handlers {
+        let output = handler(5);
+        print!("{output} ");
+    }
+}
+
 pub fn run() {
     // raw_pointers();
     // unsafe_code();
@@ -497,5 +563,7 @@ pub fn run() {
     // synonyms();
     // type_aliases().unwrap();
     // never_type();
-    dst();
+    // dst();
+    // function_pointers();
+    returning_closures();
 }

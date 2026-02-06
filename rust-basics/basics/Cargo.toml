@@ -11,6 +11,7 @@ dirs-next = "2.0.0"
 trpl = "0.3.0"
 library_demo = { path = "examples/library_demo" }
 itertools = "0.14.0"
+hello_macro = { path = "src/rust_lang/hello_macro" }
 
 [dev-dependencies]
 pretty_assertions = "1"

@@ -8,4 +8,5 @@ members = [
     "basics/src/rust_lang/automated_tests",
     "basics/src/rust_lang/my_crate",
     "basics/src/rust_lang/adder",
+    "basics/src/rust_lang/hello_macro",
 ]

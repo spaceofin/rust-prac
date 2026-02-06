@@ -549,6 +549,43 @@ fn returning_closures() {
     }
 }
 
+
+// Declarative macro
+// #[macro_export]
+macro_rules! my_vec {
+    ( $( $x:expr ),* ) => {
+        {
+            let mut temp_vec = Vec::new();
+            $(
+                temp_vec.push($x);
+            )*
+            temp_vec
+        }
+    };
+}
+
+// Macros must be defined before use.
+
+fn declarative_macros() {
+    let mut my_vec = my_vec![1, 2, 3];
+    println!("my_vec: {my_vec:?}");
+}
+
+use hello_macro::HelloMacro;
+
+struct Pancakes;
+
+impl HelloMacro for Pancakes {
+    fn hello_macro() {
+        println!("Hello, Macro! My name is Pancakes!");
+    }
+}
+
+fn procedural_macros() {
+    Pancakes::hello_macro();
+}
+
+
 pub fn run() {
     // raw_pointers();
     // unsafe_code();
@@ -565,5 +602,7 @@ pub fn run() {
     // never_type();
     // dst();
     // function_pointers();
-    returning_closures();
+    // returning_closures();
+    declarative_macros();
+    procedural_macros();
 }

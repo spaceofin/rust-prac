@@ -572,17 +572,24 @@ fn declarative_macros() {
 }
 
 use hello_macro::HelloMacro;
+use hello_macro_derive::HelloMacro;
 
+#[derive(HelloMacro)]
 struct Pancakes;
 
-impl HelloMacro for Pancakes {
-    fn hello_macro() {
-        println!("Hello, Macro! My name is Pancakes!");
-    }
-}
+// Manual trait implementation, not a macro.
+// impl HelloMacro for Pancakes {
+//     fn hello_macro() {
+//         println!("Hello, Macro! My name is Pancakes!");
+//     }
+// }
+
+#[derive(HelloMacro)]
+struct Waffles;
 
 fn procedural_macros() {
     Pancakes::hello_macro();
+    Waffles::hello_macro();
 }
 
 
@@ -603,6 +610,6 @@ pub fn run() {
     // dst();
     // function_pointers();
     // returning_closures();
-    declarative_macros();
+    // declarative_macros();
     procedural_macros();
 }

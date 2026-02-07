@@ -65,6 +65,7 @@ version = "0.1.0"
 dependencies = [
  "dirs-next",
  "hello_macro",
+ "hello_macro_derive",
  "itertools",
  "library_demo",
  "predicates",
@@ -404,6 +405,14 @@ dependencies = [
 [[package]]
 name = "hello_macro"
 version = "0.1.0"
+
+[[package]]
+name = "hello_macro_derive"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "html5ever"

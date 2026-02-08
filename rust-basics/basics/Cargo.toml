@@ -13,6 +13,8 @@ library_demo = { path = "examples/library_demo" }
 itertools = "0.14.0"
 hello_macro = { path = "src/rust_lang/hello_macro" }
 hello_macro_derive = { path = "src/rust_lang/hello_macro_derive" }
+route_macro = { path = "src/rust_lang/route_macro" }
+sql_macro = { path = "src/rust_lang/sql_macro" }
 
 [dev-dependencies]
 pretty_assertions = "1"

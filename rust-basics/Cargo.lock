@@ -71,6 +71,8 @@ dependencies = [
  "predicates",
  "pretty_assertions",
  "rand 0.8.5",
+ "route_macro",
+ "sql_macro",
  "trpl",
  "utils",
 ]
@@ -1220,6 +1222,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "route_macro"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "rustc-hash"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1415,6 +1425,13 @@ checksum = "17129e116933cf371d018bb80ae557e889637989d8638274fb25622827b03881"
 dependencies = [
  "libc",
  "windows-sys 0.60.2",
+]
+
+[[package]]
+name = "sql_macro"
+version = "0.1.0"
+dependencies = [
+ "quote",
 ]
 
 [[package]]

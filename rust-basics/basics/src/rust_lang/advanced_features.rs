@@ -592,6 +592,22 @@ fn procedural_macros() {
     Waffles::hello_macro();
 }
 
+use route_macro::route;
+use sql_macro::sql;
+
+#[route(GET, "/")]
+fn index() {
+    println!("The index function was called.");
+}
+
+fn attribute_like_macros() {
+    index();
+}
+
+fn function_like_macros() {
+    let sql = sql!(SELECT * FROM posts WHERE id=1);
+}
+
 
 pub fn run() {
     // raw_pointers();
@@ -611,5 +627,7 @@ pub fn run() {
     // function_pointers();
     // returning_closures();
     // declarative_macros();
-    procedural_macros();
+    // procedural_macros();
+    attribute_like_macros();
+    function_like_macros();
 }

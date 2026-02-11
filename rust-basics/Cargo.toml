@@ -13,4 +13,5 @@ members = [
     "basics/src/rust_lang/route_macro",
     "basics/src/rust_lang/sql_macro",
     "basics/src/rust_lang/final_project/single_threaded_web_server",
+    "basics/src/rust_lang/final_project/multi_threaded_web_server",
 ]

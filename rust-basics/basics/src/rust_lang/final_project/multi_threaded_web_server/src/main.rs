@@ -7,34 +7,31 @@ use std::{
     thread,
     time::Duration,
 };
+use multi_threaded_web_server::ThreadPool;
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
 
+    // // Unbounded thread spawning.
+    // for stream in listener.incoming() {
+    //     let stream = stream.unwrap();
+    //     thread::spawn(|| {
+    //         handle_connection(stream);
+    //     });
+    // }
+
+    // let pool = ThreadPool::new(4);
+    let pool = ThreadPool::build(0).unwrap_or_else(|e| {
+        eprintln!("{:?}",e.details);
+        panic!();
+    });
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
-        handle_connection(stream);
+        pool.execute(|| {
+            handle_connection(stream);
+        });
     }
-}
-
-fn handle_basic_connection(mut stream: TcpStream) {
-    let buf_reader = BufReader::new(&stream);
-    let http_request: Vec<_> = buf_reader
-        .lines()
-        .map(|result| result.unwrap())
-        .take_while(|line| !line.is_empty())
-        .collect();
-
-    println!("Request: {http_request:#?}");
-
-    let status_line = "HTTP/1.1 200 OK";
-    let contents = fs::read_to_string("hello.html").unwrap();
-    let length = contents.len();
-
-    let response = format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
-
-    stream.write_all(response.as_bytes()).unwrap();
 }
 
 fn handle_connection(mut stream: TcpStream) {

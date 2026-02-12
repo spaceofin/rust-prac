@@ -20,11 +20,11 @@ fn main() {
     //     });
     // }
 
-    // let pool = ThreadPool::new(4);
-    let pool = ThreadPool::build(0).unwrap_or_else(|e| {
-        eprintln!("{:?}",e.details);
-        panic!();
-    });
+    let pool = ThreadPool::new(4);
+    // let pool = ThreadPool::build(0).unwrap_or_else(|e| {
+    //     eprintln!("{:?}",e.details);
+    //     panic!();
+    // });
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 

@@ -17,9 +17,18 @@ async fn get_foo_baz() -> &'static str {
 pub fn create_router() -> Router {
 
   let foo_routes = Router::new()
-      .route("/", get(get_foo).post(post_foo))
-      .nest("/bar", Router::new().route("/", get(get_foo_bar)))
-      .nest("/baz", Router::new().route("/", get(get_foo_baz)));
+      .route(
+        "/",
+          get(get_foo)
+            .post(post_foo))
+      .nest(
+        "/bar",
+        Router::new()
+          .route("/", get(get_foo_bar)))
+      .nest(
+        "/baz",
+        Router::new()
+          .route("/", get(get_foo_baz)));
 
   Router::new()
     .route(

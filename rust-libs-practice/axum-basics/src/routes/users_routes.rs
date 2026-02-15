@@ -2,11 +2,24 @@ use axum::{Router, routing::{get,post}, extract::{Path, Query, Json, Form}};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+struct UserQuery {
+  id: i32,
+  name: String,
+}
+
+#[derive(Deserialize)]
 struct User {
   id: Option<i32>,
   name: Option<String>
 }
 
+async fn hello_with_id(Path(id): Path<i32>) -> String {
+  format!("Hello, number {}", id)
+}
+
+async fn hello_with_query(Query(user_query): Query<UserQuery>) -> String {
+  format!("Hello, number {}, user name is {}", user_query.id, user_query.name)
+}
 
 async fn greet_with_id(Path(id): Path<i32>) -> String {
   format!("Welcome, number {}", id)
@@ -58,11 +71,16 @@ async fn user_info_form(Form(user): Form<User>) -> String {
   format!("id: {}, name: {}",user.id.unwrap_or(-1), user.name.clone().unwrap_or("Anonymous".to_string()))
 }
 
-
-
 pub fn create_router() -> Router {
-  Router::new()
-    .nest("/greet",
+
+  let users_routes = Router::new()
+    .merge(
+      Router::new()
+        .route("/{id}", get(hello_with_id))
+        .route("/", get(hello_with_query))
+    )
+    .nest(
+      "/greet",
       Router::new()
         .route("/id/{id}", get(greet_with_id))
         .route("/name/{name}", get(greet_with_name))
@@ -71,11 +89,15 @@ pub fn create_router() -> Router {
         .route("/name", get(greet_with_name_query))
         .route("/", get(greet_with_query))
     )
-    .nest("/info",
+    .nest(
+      "/info",
       Router::new()
           .route("/id", post(user_id_info))
           .route("/name", post(user_name_info))
           .route("/json", post(user_info_json))
           .route("/form", post(user_info_form))
-    )
+    );
+
+  Router::new()
+    .nest("/users", users_routes)
 }

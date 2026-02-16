@@ -1,5 +1,6 @@
 use axum::{Router, routing::{get,post}, extract::{Path, Query, Json, Form}};
 use serde::Deserialize;
+use axum::body::Bytes;
 
 #[derive(Deserialize)]
 struct UserQuery {
@@ -20,6 +21,14 @@ async fn hello_with_id(Path(id): Path<i32>) -> String {
 async fn hello_with_query(Query(user_query): Query<UserQuery>) -> String {
   format!("Hello, number {}, user name is {}", user_query.id, user_query.name)
 }
+
+async fn hello_with_nickname(nickname: Bytes) -> String {
+  format!("Hello, nickname {}", String::from_utf8_lossy(&nickname))
+}
+
+// async fn hello_with_nickname(nickname: String) -> String {
+//   format!("Hello, nickname {}", nickname)
+// }
 
 async fn greet_with_id(Path(id): Path<i32>) -> String {
   format!("Welcome, number {}", id)
@@ -71,13 +80,38 @@ async fn user_info_form(Form(user): Form<User>) -> String {
   format!("id: {}, name: {}",user.id.unwrap_or(-1), user.name.clone().unwrap_or("Anonymous".to_string()))
 }
 
-pub fn create_router() -> Router {
+use axum::body::Body;
+use futures_util::stream::{self, StreamExt};
+use std::{convert::Infallible, time::Duration};
+use tokio::time::sleep;
 
+async fn users_stream() -> Body {
+    let stream = stream::iter(vec![
+        Ok::<Bytes, Infallible>(Bytes::from("user1\n")),
+        Ok(Bytes::from("user2\n")),
+        Ok(Bytes::from("user3\n")),
+    ]);
+    Body::from_stream(stream)
+}
+
+async fn users_stream_delayed() -> Body {
+    let stream = stream::iter(["user1\n", "user2\n", "user3\n"])
+      .then(|text| async move {
+        sleep(Duration::from_secs(1)).await;
+        Ok::<Bytes, Infallible>(Bytes::from(text))
+    });
+  Body::from_stream(stream)
+}
+
+pub fn create_router() -> Router {
   let users_routes = Router::new()
     .merge(
       Router::new()
         .route("/{id}", get(hello_with_id))
         .route("/", get(hello_with_query))
+        .route("/", post(hello_with_nickname))
+        .route("/stream",get(users_stream))
+        .route("/stream/delayed",get(users_stream_delayed))
     )
     .nest(
       "/greet",

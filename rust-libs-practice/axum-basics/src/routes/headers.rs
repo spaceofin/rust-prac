@@ -51,11 +51,44 @@ async fn post_headers(headers: HeaderMap) -> String {
 	)
 }
 
+use axum_extra::{
+  extract::TypedHeader,
+  headers::{ Host, UserAgent, ContentType, ContentLength}
+};
+
+async fn get_typed_headers(
+  TypedHeader(host): TypedHeader<Host>,
+  TypedHeader(user_agent): TypedHeader<UserAgent>,) -> String {
+	format!(
+		"Host: {},\n\
+    User-Agent: {}",
+    host,
+    user_agent
+	)
+}
+
+async fn post_typed_headers(
+  TypedHeader(content_type): TypedHeader<ContentType>,
+  TypedHeader(content_length): TypedHeader<ContentLength>,
+) -> String {
+	format!(
+    "Content-Type: {},\n\
+    Content-Length: {}",
+    content_type,
+    content_length.0,
+	)
+}
+
 pub fn create_router() -> Router {
     Router::new()
         .route(
             "/headers",
             get(get_headers)
             .post(post_headers),
+        )
+        .route(
+            "/typed-headers",
+            get(get_typed_headers)
+            .post(post_typed_headers),
         )
 }

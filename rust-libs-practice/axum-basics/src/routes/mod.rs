@@ -4,3 +4,4 @@ pub mod sample;
 pub mod users;
 pub mod files;
 pub mod headers;
+pub mod cities;

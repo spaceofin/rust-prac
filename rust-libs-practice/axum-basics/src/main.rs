@@ -4,7 +4,8 @@ mod routes;
 // use routes::users;
 // use routes::files;
 // use routes::headers;
-use routes::cities;
+// use routes::cities;
+use routes::status_code;
 
 #[tokio::main]
 async fn main() {
@@ -12,7 +13,8 @@ async fn main() {
     // let app = users::create_router();
     // let app = sample::create_router();
     // let app = headers::create_router();
-    let app = cities::create_router();
+    // let app = cities::create_router();
+    let app = status_code::create_router();
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();

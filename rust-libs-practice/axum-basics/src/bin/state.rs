@@ -1,5 +1,7 @@
 use axum::{
-	Router, extract::{FromRef, State}, http::uri::Authority, routing::get
+	Router, 
+	extract::{FromRef, State}, 
+	routing::get
 };
 use std::sync::{Arc, Mutex};
 

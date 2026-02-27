@@ -1,8 +1,8 @@
 [package]
-name = "tokio-basics"
+name = "tokio-demo"
 version = "0.1.0"
 edition = "2024"
-default-run = "tokio-basics"
+default-run = "tokio-demo"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }

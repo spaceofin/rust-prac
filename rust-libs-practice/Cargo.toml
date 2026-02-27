@@ -1,3 +1,11 @@
 [workspace] 
 resolver = "3"
-members = ["axum-demo", "logger", "sqlx-demo", "tokio-demo"]
+members = [
+    "axum-demo",
+    "logger",
+    "seaorm-demo/seaorm-app",
+    "seaorm-demo/migration",
+    "sqlx-demo",
+    "tokio-demo"
+]
+default-members = ["seaorm-demo/seaorm-app"]

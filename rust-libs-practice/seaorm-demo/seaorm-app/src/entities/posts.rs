@@ -3,56 +3,57 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "post")]
+#[sea_orm(table_name = "posts")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: i32,
     pub user_id: i32,
     pub title: String,
+    #[sea_orm(column_type = "Text")]
     pub content: String,
     pub created_at: DateTime,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::comment::Entity")]
-    Comment,
-    #[sea_orm(has_many = "super::post_tag::Entity")]
-    PostTag,
+    #[sea_orm(has_many = "super::comments::Entity")]
+    Comments,
+    #[sea_orm(has_many = "super::post_tags::Entity")]
+    PostTags,
     #[sea_orm(
-        belongs_to = "super::user::Entity",
+        belongs_to = "super::users::Entity",
         from = "Column::UserId",
-        to = "super::user::Column::Id",
+        to = "super::users::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    User,
+    Users,
 }
 
-impl Related<super::comment::Entity> for Entity {
+impl Related<super::comments::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Comment.def()
+        Relation::Comments.def()
     }
 }
 
-impl Related<super::post_tag::Entity> for Entity {
+impl Related<super::post_tags::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::PostTag.def()
+        Relation::PostTags.def()
     }
 }
 
-impl Related<super::user::Entity> for Entity {
+impl Related<super::users::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::User.def()
+        Relation::Users.def()
     }
 }
 
-impl Related<super::tag::Entity> for Entity {
+impl Related<super::tags::Entity> for Entity {
     fn to() -> RelationDef {
-        super::post_tag::Relation::Tag.def()
+        super::post_tags::Relation::Tags.def()
     }
     fn via() -> Option<RelationDef> {
-        Some(super::post_tag::Relation::Post.def().rev())
+        Some(super::post_tags::Relation::Posts.def().rev())
     }
 }
 

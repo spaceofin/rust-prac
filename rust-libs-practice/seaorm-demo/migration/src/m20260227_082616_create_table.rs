@@ -6,17 +6,17 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // 1. User table create
+        // 1. Users table create
         manager
             .create_table(
                 Table::create()
-                    .table(User::Table)
+                    .table(Users::Table)
                     .if_not_exists()
                     // .col(pk_auto(User::Id))
-                    .col(integer(User::Id).not_null().primary_key())
-                    .col(string(User::Username).not_null().unique_key())
+                    .col(integer(Users::Id).not_null().primary_key())
+                    .col(string(Users::Username).not_null().unique_key())
                     .col(
-                        date_time(User::CreatedAt)
+                        date_time(Users::CreatedAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
@@ -24,96 +24,96 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        // 2. Post table create
+        // 2. Posts table create
         manager
             .create_table(
                 Table::create()
-                    .table(Post::Table)
+                    .table(Posts::Table)
                     .if_not_exists()
                     // .col(pk_auto(Post::Id))
-                    .col(integer(Post::Id).not_null().primary_key())
-                    .col(integer(Post::UserId).not_null())
-                    .col(string(Post::Title).not_null())
-                    .col(string(Post::Content).not_null())
+                    .col(integer(Posts::Id).not_null().primary_key())
+                    .col(integer(Posts::UserId).not_null())
+                    .col(string(Posts::Title).not_null())
+                    .col(text(Posts::Content).not_null())
                     .col(
-                        date_time(Post::CreatedAt)
+                        date_time(Posts::CreatedAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .from(Post::Table, Post::UserId)
-                            .to(User::Table, User::Id)
+                            .from(Posts::Table, Posts::UserId)
+                            .to(Users::Table, Users::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
             )
             .await?;
 
-        // 3. Comment table create
+        // 3. Comments table create
         manager
             .create_table(
                 Table::create()
-                    .table(Comment::Table)
+                    .table(Comments::Table)
                     .if_not_exists()
-                    // .col(pk_auto(Comment::Id))
-                    .col(integer(Comment::Id).not_null().primary_key())
-                    .col(integer(Comment::PostId).not_null())
-                    .col(integer(Comment::UserId).not_null())
-                    .col(string(Comment::Text).not_null())
+                    // .col(pk_auto(Comments::Id))
+                    .col(integer(Comments::Id).not_null().primary_key())
+                    .col(integer(Comments::PostId).not_null())
+                    .col(integer(Comments::UserId).not_null())
+                    .col(text(Comments::Text).not_null())
                     .col(
-                        date_time(Comment::CreatedAt)
+                        date_time(Comments::CreatedAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .from(Comment::Table, Comment::PostId)
-                            .to(Post::Table, Post::Id)
+                            .from(Comments::Table, Comments::PostId)
+                            .to(Posts::Table, Posts::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .from(Comment::Table, Comment::UserId)
-                            .to(User::Table, User::Id)
+                            .from(Comments::Table, Comments::UserId)
+                            .to(Users::Table, Users::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
             )
             .await?;
 
-        // 4. Tag table create
+        // 4. Tags table create
         manager
             .create_table(
                 Table::create()
-                    .table(Tag::Table)
+                    .table(Tags::Table)
                     .if_not_exists()
-                    // .col(pk_auto(Tag::Id))
-                    .col(integer(Tag::Id).not_null().primary_key())
-                    .col(string(Tag::Name).not_null().unique_key())
+                    // .col(pk_auto(Tags::Id))
+                    .col(integer(Tags::Id).not_null().primary_key())
+                    .col(string(Tags::Name).not_null().unique_key())
                     .to_owned(),
             )
             .await?;
 
-        // 5. PostTag table create
+        // 5. PostTags table create
         manager
             .create_table(
                 Table::create()
-                    .table(PostTag::Table)
+                    .table(PostTags::Table)
                     .if_not_exists()
-                    .col(integer(PostTag::PostId).not_null())
-                    .col(integer(PostTag::TagId).not_null())
-                    .primary_key(Index::create().col(PostTag::PostId).col(PostTag::TagId))
+                    .col(integer(PostTags::PostId).not_null())
+                    .col(integer(PostTags::TagId).not_null())
+                    .primary_key(Index::create().col(PostTags::PostId).col(PostTags::TagId))
                     .foreign_key(
                         ForeignKey::create()
-                            .from(PostTag::Table, PostTag::PostId)
-                            .to(Post::Table, Post::Id)
+                            .from(PostTags::Table, PostTags::PostId)
+                            .to(Posts::Table, Posts::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .from(PostTag::Table, PostTag::TagId)
-                            .to(Tag::Table, Tag::Id)
+                            .from(PostTags::Table, PostTags::TagId)
+                            .to(Tags::Table, Tags::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
@@ -124,29 +124,29 @@ impl MigrationTrait for Migration {
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // 1. PostTag table drop
+        // 1. PostTags table drop
         manager
-            .drop_table(Table::drop().table(PostTag::Table).if_exists().to_owned())
+            .drop_table(Table::drop().table(PostTags::Table).if_exists().to_owned())
             .await?;
 
-        // 2. Comment table drop
+        // 2. Comments table drop
         manager
-            .drop_table(Table::drop().table(Comment::Table).if_exists().to_owned())
+            .drop_table(Table::drop().table(Comments::Table).if_exists().to_owned())
             .await?;
 
-        // 3. Post table drop
+        // 3. Posts table drop
         manager
-            .drop_table(Table::drop().table(Post::Table).if_exists().to_owned())
+            .drop_table(Table::drop().table(Posts::Table).if_exists().to_owned())
             .await?;
 
-        // 4. Tag table drop
+        // 4. Tags table drop
         manager
-            .drop_table(Table::drop().table(Tag::Table).if_exists().to_owned())
+            .drop_table(Table::drop().table(Tags::Table).if_exists().to_owned())
             .await?;
 
-        // 5. User table drop
+        // 5. Users table drop
         manager
-            .drop_table(Table::drop().table(User::Table).if_exists().to_owned())
+            .drop_table(Table::drop().table(Users::Table).if_exists().to_owned())
             .await?;
 
         Ok(())
@@ -154,7 +154,7 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-enum User {
+enum Users {
     Table,
     Id,
     Username,
@@ -162,7 +162,7 @@ enum User {
 }
 
 #[derive(DeriveIden)]
-enum Post {
+enum Posts {
     Table,
     Id,
     UserId,
@@ -172,7 +172,7 @@ enum Post {
 }
 
 #[derive(DeriveIden)]
-enum Comment {
+enum Comments {
     Table,
     Id,
     PostId,
@@ -182,14 +182,14 @@ enum Comment {
 }
 
 #[derive(DeriveIden)]
-enum Tag {
+enum Tags {
     Table,
     Id,
     Name,
 }
 
 #[derive(DeriveIden)]
-enum PostTag {
+enum PostTags {
     Table,
     PostId,
     TagId,

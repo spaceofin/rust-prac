@@ -2,8 +2,8 @@
 
 pub mod prelude;
 
-pub mod comment;
-pub mod post;
-pub mod post_tag;
-pub mod tag;
-pub mod user;
+pub mod comments;
+pub mod post_tags;
+pub mod posts;
+pub mod tags;
+pub mod users;

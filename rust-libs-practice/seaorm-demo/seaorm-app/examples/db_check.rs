@@ -6,7 +6,7 @@ use seaorm_app::establish_connection;
 async fn main() {
     let conn = establish_connection().await.unwrap();
 
-    let users: Vec<users::Model> = users::Entity::find().all(&conn).await.unwrap();
+    let users = users::Entity::find().all(&conn).await.unwrap();
 
     println!("users:\n{:?}", users);
 }

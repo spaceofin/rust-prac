@@ -2,7 +2,7 @@ use sea_orm::{DatabaseConnection, DbErr, DeleteResult, EntityTrait, ModelTrait};
 use seaorm_app::entities::users;
 use seaorm_app::establish_connection;
 
-async fn delete_user(conn: &DatabaseConnection, id: i32) -> Result<DeleteResult, DbErr> {
+async fn delete_user(conn: &DatabaseConnection, id: i64) -> Result<DeleteResult, DbErr> {
     let res = users::Entity::find_by_id(id)
         .one(conn)
         .await?

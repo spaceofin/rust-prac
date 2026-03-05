@@ -8,7 +8,7 @@ use seaorm_app::establish_connection;
 
 async fn update_user(
     conn: &DatabaseConnection,
-    id: i32,
+    id: i64,
     username: &str,
 ) -> Result<users::Model, DbErr> {
     let mut user: users::ActiveModel = users::Entity::find_by_id(id)
@@ -25,7 +25,7 @@ async fn update_user(
 
 async fn update_users_created_at(
     conn: &DatabaseConnection,
-    ids: Vec<i32>,
+    ids: Vec<i64>,
 ) -> Result<UpdateResult, DbErr> {
     let update_data = users::ActiveModel {
         created_at: Set(chrono::Utc::now().naive_utc()),

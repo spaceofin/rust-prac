@@ -1,5 +1,5 @@
 use sea_orm::{ActiveModelTrait, ActiveValue::Set, DatabaseConnection, EntityTrait};
-use sea_orm::{DbErr, InsertResult};
+use sea_orm::{DbErr, InsertManyResult};
 use seaorm_app::entities::users;
 use seaorm_app::establish_connection;
 
@@ -17,7 +17,7 @@ async fn insert_user(conn: &DatabaseConnection, username: &str) -> Result<users:
 async fn insert_users(
     conn: &DatabaseConnection,
     usernames: Vec<&str>,
-) -> Result<InsertResult<users::ActiveModel>, DbErr> {
+) -> Result<InsertManyResult<users::ActiveModel>, DbErr> {
     let active_models: Vec<users::ActiveModel> = usernames
         .into_iter()
         .map(|username| users::ActiveModel {

@@ -14,7 +14,12 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     // .col(pk_auto(User::Id))
                     .col(integer(Users::Id).not_null().primary_key())
-                    .col(string(Users::Username).not_null().unique_key())
+                    .col(
+                        string(Users::Username)
+                            .not_null()
+                            .unique_key()
+                            .extra("COLLATE NOCASE"),
+                    )
                     .col(
                         date_time(Users::CreatedAt)
                             .not_null()
@@ -90,7 +95,12 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     // .col(pk_auto(Tags::Id))
                     .col(integer(Tags::Id).not_null().primary_key())
-                    .col(string(Tags::Name).not_null().unique_key())
+                    .col(
+                        string(Tags::Name)
+                            .not_null()
+                            .unique_key()
+                            .extra("COLLATE NOCASE"),
+                    )
                     .to_owned(),
             )
             .await?;

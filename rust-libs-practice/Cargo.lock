@@ -3102,6 +3102,8 @@ dependencies = [
  "dotenvy",
  "migration",
  "sea-orm",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 

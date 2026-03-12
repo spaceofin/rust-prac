@@ -18,3 +18,160 @@ pub struct Model {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::entities::posts;
+    use chrono::NaiveDateTime;
+    use sea_orm::{DatabaseBackend, MockDatabase, Transaction};
+
+    #[tokio::test]
+    async fn test_find_user() -> Result<(), DbErr> {
+        // MockDatabase
+        let db = MockDatabase::new(DatabaseBackend::Sqlite)
+            // First query result
+            .append_query_results([vec![Model {
+                id: 1,
+                username: "alice".to_owned(),
+                created_at: NaiveDateTime::parse_from_str(
+                    "2026-03-08 14:11:20",
+                    "%Y-%m-%d %H:%M:%S",
+                )
+                .unwrap(),
+            }]])
+            // Second query result
+            .append_query_results([[
+                (
+                    Model {
+                        id: 1,
+                        username: "alice".to_owned(),
+                        created_at: NaiveDateTime::parse_from_str(
+                            "2026-03-08T14:11:20",
+                            "%Y-%m-%dT%H:%M:%S",
+                        )
+                        .unwrap(),
+                    },
+                    posts::Model {
+                        id: 1,
+                        user_id: 1,
+                        title: "First Post".to_owned(),
+                        content: "This is the first post content".to_owned(),
+                        created_at: NaiveDateTime::parse_from_str(
+                            "2026-03-08T05:59:05",
+                            "%Y-%m-%dT%H:%M:%S",
+                        )
+                        .unwrap(),
+                    },
+                ),
+                (
+                    Model {
+                        id: 1,
+                        username: "alice".to_owned(),
+                        created_at: NaiveDateTime::parse_from_str(
+                            "2026-03-08T14:11:20",
+                            "%Y-%m-%dT%H:%M:%S",
+                        )
+                        .unwrap(),
+                    },
+                    posts::Model {
+                        id: 2,
+                        user_id: 1,
+                        title: "Second Post".to_owned(),
+                        content: "This is the second post content".to_owned(),
+                        created_at: NaiveDateTime::parse_from_str(
+                            "2026-03-08T05:59:05",
+                            "%Y-%m-%dT%H:%M:%S",
+                        )
+                        .unwrap(),
+                    },
+                ),
+            ]])
+            .into_connection();
+
+        assert_eq!(
+            Entity::find().one(&db).await?,
+            Some(Model {
+                id: 1,
+                username: "alice".to_owned(),
+                created_at: NaiveDateTime::parse_from_str(
+                    "2026-03-08T14:11:20",
+                    "%Y-%m-%dT%H:%M:%S"
+                )
+                .unwrap(),
+            })
+        );
+
+        assert_eq!(
+            Entity::find()
+                .find_also_related(posts::Entity)
+                .all(&db)
+                .await?,
+            [
+                (
+                    Model {
+                        id: 1,
+                        username: "alice".to_owned(),
+                        created_at: NaiveDateTime::parse_from_str(
+                            "2026-03-08T14:11:20",
+                            "%Y-%m-%dT%H:%M:%S",
+                        )
+                        .unwrap(),
+                    },
+                    Some(posts::Model {
+                        id: 1,
+                        user_id: 1,
+                        title: "First Post".to_owned(),
+                        content: "This is the first post content".to_owned(),
+                        created_at: NaiveDateTime::parse_from_str(
+                            "2026-03-08T05:59:05",
+                            "%Y-%m-%dT%H:%M:%S",
+                        )
+                        .unwrap(),
+                    }),
+                ),
+                (
+                    Model {
+                        id: 1,
+                        username: "alice".to_owned(),
+                        created_at: NaiveDateTime::parse_from_str(
+                            "2026-03-08T14:11:20",
+                            "%Y-%m-%dT%H:%M:%S",
+                        )
+                        .unwrap(),
+                    },
+                    Some(posts::Model {
+                        id: 2,
+                        user_id: 1,
+                        title: "Second Post".to_owned(),
+                        content: "This is the second post content".to_owned(),
+                        created_at: NaiveDateTime::parse_from_str(
+                            "2026-03-08T05:59:05",
+                            "%Y-%m-%dT%H:%M:%S",
+                        )
+                        .unwrap(),
+                    }),
+                ),
+            ]
+        );
+
+        // Checking transaction log
+        assert_eq!(
+            db.into_transaction_log(),
+            [
+                Transaction::from_sql_and_values(
+                    DatabaseBackend::Sqlite,
+                    r#"SELECT "users"."id", "users"."username", "users"."created_at" FROM "users" LIMIT ?"#,
+                    [1u64.into()]
+                ),
+                Transaction::from_sql_and_values(
+                    DatabaseBackend::Sqlite,
+                    r#"SELECT "users"."id" AS "A_id", "users"."username" AS "A_username", "users"."created_at" AS "A_created_at", "posts"."id" AS "B_id", "posts"."user_id" AS "B_user_id", "posts"."title" AS "B_title", "posts"."content" AS "B_content", "posts"."created_at" AS "B_created_at" FROM "users" LEFT JOIN "posts" ON "users"."id" = "posts"."user_id""#,
+                    []
+                ),
+            ]
+        );
+
+        Ok(())
+    }
+}

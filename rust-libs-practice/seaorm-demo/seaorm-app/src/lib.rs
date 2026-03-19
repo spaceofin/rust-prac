@@ -1,4 +1,5 @@
 pub mod entities;
+pub mod state;
 
 use dotenvy::dotenv;
 use migration::{Migrator, MigratorTrait};

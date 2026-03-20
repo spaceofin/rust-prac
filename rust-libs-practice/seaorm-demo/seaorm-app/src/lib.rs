@@ -1,4 +1,5 @@
 pub mod entities;
+pub mod routes;
 pub mod state;
 
 use dotenvy::dotenv;
